@@ -1,0 +1,41 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Redirect all requests to index.php with query string
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
+
+# Set default timezone (optional)
+SetEnv TZ Asia/Kathmandu
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options nosniff
+    Header set X-XSS-Protection "1; mode=block"
+    Header always append X-Frame-Options DENY
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Deny access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|config\.php|db\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Cache control (optional, improves performance)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access 1 month"
+    ExpiresByType image/jpeg "access 1 month"
+    ExpiresByType image/gif "access 1 month"
+    ExpiresByType image/png "access 1 month"
+    ExpiresByType text/css "access 1 month"
+    ExpiresByType application/pdf "access 1 month"
+    ExpiresByType text/x-javascript "access 1 month"
+    ExpiresByType application/x-shockwave-flash "access 1 month"
+    ExpiresByType image/x-icon "access 1 month"
+    ExpiresDefault "access 2 days"
+</IfModule>
