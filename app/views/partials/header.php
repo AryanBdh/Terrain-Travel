@@ -20,7 +20,7 @@
                 <?php
                 // Determine profile image path
                 $defaultImagePath = '/travel/public/images/default.png'; // Path to default image
-                $profileImagePath = '/travel/uploads/profile_images/' . $_SESSION['user_id'] . '.png';
+                $profileImagePath = '/travel/public/images/profile_images/' . $_SESSION['user_id'] . '.png';
 
                 // Check if the user's profile image exists; if not, use the default image
                 $profileImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath : $defaultImagePath;
@@ -35,7 +35,7 @@
             </li>
         <?php else: ?>
             <!-- User is not logged in -->
-            <li><a href="/travel/login" class="sign-in-btn">Sign in</a></li>
+            <li style="list-style:none"><a href="/travel/login" class="sign-in-btn">Sign in</a></li>
         <?php endif; ?>
     </div>
 </header>

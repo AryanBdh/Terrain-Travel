@@ -11,9 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 
     // Validate inputs
     if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
-        $error = "All fields are required.";
+        $_SESSION['error'] = "All fields are required.";
     } elseif ($password !== $confirmPassword) {
-        $error = "Passwords do not match.";
+        $_SESSION['error'] = "Passwords do not match.";
     } else {
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
@@ -26,16 +26,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 
         // Execute the statement
         if ($stmt->execute()) {
-            $success = "Registration successful!";
+            $_SESSION['success'] = "Registration successful!";
         } else {
-            $error = "Registration failed. Please try again.";
+            $_SESSION['error'] = "Registration failed. Please try again.";
         }
 
         // Close the statement
         $stmt->close();
     }
+
+    // Redirect to clear POST data
+    header("Location: /travel/register");
+    exit();
 }
 ?>
+
 
 
 
@@ -50,10 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             <p>Join Travelista Tours for amazing travel experiences</p>
 
             <!-- Display error or success message -->
-            <?php if (isset($error)): ?>
-                <p class="error"><?= htmlspecialchars($error) ?></p>
-            <?php elseif (isset($success)): ?>
-                <p class="success"><?= htmlspecialchars($success) ?></p>
+            <?php if (isset($_SESSION['error'])): ?>
+                <p style="color:red" class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
+                <?php unset($_SESSION['error']); // Clear the error message ?>
+            <?php elseif (isset($_SESSION['success'])): ?>
+                <p style="color:green" class="success"><?= htmlspecialchars($_SESSION['success']) ?></p>
+                <?php unset($_SESSION['success']); // Clear the success message ?>
             <?php endif; ?>
 
             <form id="signup-form" method="POST">
@@ -83,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 
                 <button type="submit" name="register">SIGN UP</button>
             </form>
-            <p class="login-link">Already have an account? <a href="/travel/register">Sign In</a></p>
+            <p class="login-link">Already have an account? <a href="/travel/login">Sign In</a></p>
         </div>
     </div>
 </body>
-</html>
+

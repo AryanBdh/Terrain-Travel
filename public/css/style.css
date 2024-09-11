@@ -68,12 +68,20 @@ nav ul li a {
 
 .user-profile {
     cursor: pointer;
+  
+ 
+    background-size: cover; /* Ensures the image covers the whole div */
+    background-position: center; /* Centers the image within the div */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
 }
+
 .user-profile img {
-    width: 40px;
-    height: 40px;
+    height: 30px;
+    width: 30px;
     border-radius: 50%;
+    object-fit: cover;
 }
+
 
 .dropdown {
     display: none; /* Initially hidden */
@@ -125,7 +133,6 @@ nav ul li a {
 .banner img {
     width: 100%;
     height: 100%;
-    background-image: url(../images/banner.jpg);
     object-fit: cover;
     border-radius: 30px;
     background-size: cover;
@@ -148,81 +155,80 @@ nav ul li a {
 }
 
 
-.packages-section{
-    margin-top: 50px;
-    width: 100%;
-}
 
-.packages-section .package-title {
+
+.package h2 {
     text-align: center;
-    font-size: 20px;
     margin-bottom: 20px;
-    color: #333;
+    margin-top:50px ;
 }
 
-.packages-carousel {
+.package-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-}
-
-.package-item {
+    overflow: hidden; /* Hides the overflow content */
     position: relative;
-    margin: 0 15px;
-    width: 300px;
-    height: 400px;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    scroll-snap-align: start;
 }
 
-.package-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.package-card {
+    flex: 0 0 25%; /* Adjust this to control how many cards are visible at once */
+    position: relative;
+    margin: 0 10px;
+    overflow: hidden; /* Hide any content overflow */
     transition: transform 0.3s ease;
 }
 
-.package-info {
+.package-image {
+    position: relative;
+}
+
+.package-card img {
+    width: 100%;
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+.package-card:hover img {
+    opacity: 0.7; /* Adjust to control the fade on hover */
+}
+
+.overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust for overlay color */
+    color: #fff;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
-.package-info h3 {
-    margin: 10px 0;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.see-more-btn {
-    padding: 10px 20px;
-    background-color: #1db9c3;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-}
-
-.package-item:hover img {
-    transform: scale(1.1);
-}
-
-.package-item:hover .package-info {
+.package-card:hover .overlay {
     opacity: 1;
 }
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
 
 /*home*/
 
@@ -231,7 +237,7 @@ nav ul li a {
     width: 70%;
     display: flex;
     height: 90%;
-    margin: 0 auto;
+    margin: 50px auto;
     box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -244,12 +250,29 @@ nav ul li a {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+}
+
+.left-column::after{
+    content: '';
+    background: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .left-column h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     text-align: center;
+    z-index: 1;
+}
+
+.left-column p{
+   
+    z-index: 1;
 }
 
 .right-column {
@@ -292,6 +315,7 @@ input {
 }
 
 button {
+    align-items: center;
     width: 100%;
     padding: 0.75rem;
     background-color: #0099cc;
@@ -318,10 +342,14 @@ button {
 /*profile*/
 .profile-container {
     width: 70%;
-    display: flex;
-    height: 100%;
     margin: 0 auto;
-    box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
+    height: 500px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .profile-picture-section {
@@ -329,16 +357,15 @@ button {
     text-align: center;
 }
 
-.profile-details-section {
-    flex: 2;
+.profile-picture-section form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
 }
 
-.profile-picture-section .pic-img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
+.profile-details-section {
+    flex: 1;
 }
 
 .profile-pic-large {
@@ -360,5 +387,6 @@ button {
 .error-message {
     color: red;
 }
+
 
 /*profile*/
