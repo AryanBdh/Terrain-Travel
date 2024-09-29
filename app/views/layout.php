@@ -20,6 +20,20 @@
 
     <main>
         <?php
+
+     // Check if the current page is the admin dashboard
+     $requestUri = strtok($_SERVER['REQUEST_URI'], '?');  // Remove the query string
+     $requestUri = strtok($requestUri, '#');  // Remove the fragment
+
+
+     $adminPath = 'app/views/admin/' . $page . '.php';
+     // If the user is on the admin dashboard page, include dashboardCard.php
+     if ($requestUri === '/travel/admin/dashboard') {
+        if (file_exists($adminPath)) {
+            include $adminPath;
+        }
+     }
+
         // Determine the file path for the page
         $filePath = 'app/views/' . $page . '.php';
         

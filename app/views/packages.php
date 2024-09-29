@@ -8,21 +8,16 @@
         <div class="package-container">
 
             <?php
-            $query = "SELECT * FROM packages";
-            $result = mysqli_query($mysqli, $query);
-            while ($package = mysqli_fetch_assoc($result)) {
-                ?>
+            foreach ($packages as $package): ?>
                 <div class="package-card">
-                    <div class="package-image">
-                        <img src="./public/images/packages/<?= $package['image'] ?>"
-                            alt="<?= htmlspecialchars($package['name']) ?>">
-                        <div class="overlay">
-                            <h3><?= htmlspecialchars($package['name']) ?></h3>
-                            <a href="/travel/packages/<?= $package['id'] ?>" class="btn">See More</a>
-                        </div>
-                    </div>
+                    <img src="/uploads/<?php echo $package['image']; ?>" alt="Package Image" class="package-image">
+                    <h3><?php echo htmlspecialchars($package['name']); ?></h3>
+                    <p><?php echo htmlspecialchars($package['description']); ?></p>
+                    <p>Price: $<?php echo htmlspecialchars($package['price']); ?></p>
+                    <a href="/travel/package?id=<?php echo $package['id']; ?>" class="btn">View Details</a>
                 </div>
-                <?php
+                
+               <?php endforeach; ?>
             }
             ?>
         </div>

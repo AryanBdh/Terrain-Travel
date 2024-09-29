@@ -11,7 +11,7 @@
 }
 
 :root {
-  --blue: #2a2185;
+  --blue: #0D6577;
   --white: #fff;
   --gray: #f5f5f5;
   --black1: #222;
@@ -143,6 +143,104 @@ body {
   width: calc(100% - 80px);
   left: 80px;
 }
+
+/* Main Content Wrapper */
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  width: calc(100% - 300px); /* Adjust for navigation width */
+}
+
+/* Packages Section */
+.packages-section {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+}
+
+/* Package Form Styles */
+.package-form {
+  flex: 1;
+  background: var(--white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+}
+
+.package-form h2 {
+  color: var(--blue);
+  margin-bottom: 20px;
+}
+
+.package-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.package-form form label {
+  font-weight: 600;
+}
+
+.package-form form input,
+.package-form form textarea {
+  padding: 10px;
+  border: 1px solid var(--black2);
+  border-radius: 5px;
+}
+
+.package-form form button {
+  padding: 10px;
+  background: var(--blue);
+  color: var(--white);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Package List Styles */
+.package-list {
+  flex: 2;
+  background: var(--white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+}
+
+.package-list h2 {
+  color: var(--blue);
+  margin-bottom: 20px;
+}
+
+.package-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.package-list table th,
+.package-list table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray);
+}
+
+.package-list table th {
+  background-color: var(--blue);
+  color: var(--white);
+}
+
+.package-list table td a {
+  color: var(--blue);
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.package-list table td a:hover {
+  text-decoration: underline;
+}
+
 
 .topbar {
   width: 100%;

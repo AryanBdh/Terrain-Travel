@@ -1,5 +1,5 @@
 <?php
-// Start the session
+
 
 // Include database connection
 include './config/config.php'; // Include the configuration file
@@ -53,16 +53,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Only allow non-admin users to update their profile details
     if ($_SESSION['email'] !== $adminEmail) {
         // Handle profile picture update
-        if (isset($_FILES['profile_image'])) {
-            $targetDir = $_SERVER['DOCUMENT_ROOT'] . "/travel/public/images/profile_images/";
+        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+            // Directory to store profile images
+            $targetDir = "/travel/public/images/profile_images/";
             $targetFile = $targetDir . $userId . '.png'; // Save as user_id.png
 
-            if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $targetFile)) {
-                $_SESSION['success'] = "Profile picture updated successfully.";
-                
+            // Ensure directory exists and is writable
+            if (!is_dir($_SERVER['DOCUMENT_ROOT'] . $targetDir)) {
+                mkdir($_SERVER['DOCUMENT_ROOT'] . $targetDir, 0777, true);
+            }
+
+            // Move uploaded file to the destination folder
+            if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $targetFile)) {
+                // Update the profile image path in the database (store the relative path)
+                $updateQuery = "UPDATE users SET profile_image='$targetFile' WHERE id='$userId'";
+
+                if (mysqli_query($mysqli, $updateQuery)) {
+                    $_SESSION['success'] = "Profile picture updated successfully.";
+                    $_SESSION['profile_image'] = $targetFile; // Update session with the new profile image path
+                } else {
+                    $_SESSION['error'] = "Failed to update profile picture in the database.";
+                }
+
+                // Redirect to profile page after updating the image
+                header('Location: /travel/profile');
+                exit();
             } else {
                 $_SESSION['error'] = "Failed to upload profile picture.";
             }
+        } elseif (isset($_FILES['profile_image'])) {
+            // Handle any file upload errors
+            $_SESSION['error'] = "Error uploading file: " . $_FILES['profile_image']['error'];
         }
 
         // Handle user details update
