@@ -1,43 +1,73 @@
-// app/controllers/PackageController.php
+<?php
+// app/controllers/AdminPackageController.php
 
-class PackageController extends Controller {
+class PackageController {
+    private $packageModel;
 
-    public function __construct() {
-        $this->packageModel = $this->model('Package');
+    public function __construct($packageModel) {
+        require_once './config/db.php'; // Ensure db.php is included
+        $this->packageModel = $packageModel;
     }
 
-    // Add package action
+    // Display the packages page with form and list
+    public function index() {
+        $packages = $this->packageModel->getAllPackages();
+        $content = 'admin/packages.php'; // View for admin package
+        require_once 'views/admin/adminLayout.php';
+    }
+
+    // Add a new package
     public function addPackage() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Handle the form submission
-            $image = $_FILES['package-image']['name'];
-            $target = '/public/images/packages' . basename($image);
+            $name = $_POST['package-name'];
+            $description = $_POST['package-description'];
+            $price = $_POST['package-price'];
 
-            // Move the uploaded file to the target directory
-            move_uploaded_file($_FILES['package-image']['tmp_name'], $target);
-
-            $data = [
-                'name' => trim($_POST['package-name']),
-                'description' => trim($_POST['package-description']),
-                'price' => trim($_POST['package-price']),
-                'image' => $image
-            ];
-
-            if ($this->packageModel->addPackage($data)) {
-                // Redirect to admin page or package list
-                header('Location: /travel/admin/packages');
-            } else {
-                die('Something went wrong');
+            // Handle image upload
+            if (!empty($_FILES['package-image']['name'])) {
+                $imageName = time() . '_' . $_FILES['package-image']['name'];
+                move_uploaded_file($_FILES['package-image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/public/images/packages' . $imageName);
             }
-        } else {
-            $this->view('admin/addPackage');
+
+            $this->packageModel->addPackage($name, $description, $price, $imageName);
+            header('Location: /travel/admin/packages');
+            exit;
         }
     }
 
-    // Display all packages
-    public function listPackages() {
-        $packages = $this->packageModel->getPackages();
-        $data = ['packages' => $packages];
-        $this->view('admin/package', $data);
+    // Edit a package
+    public function editPackage() {
+        $id = $_GET['id'];
+        $package = $this->packageModel->getPackageById($id);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = $_POST['package-name'];
+            $description = $_POST['package-description'];
+            $price = $_POST['package-price'];
+
+            // Handle image upload if changed
+            if (!empty($_FILES['package-image']['name'])) {
+                $imageName = time() . '_' . $_FILES['package-image']['name'];
+                move_uploaded_file($_FILES['package-image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/public/images/packages' . $imageName);
+            } else {
+                $imageName = $package['image']; // Keep the current image if no new image is uploaded
+            }
+
+            $this->packageModel->updatePackage($id, $name, $description, $price, $imageName);
+            header('Location: /travel/admin/packages');
+            exit;
+        }
+
+        // Load the edit view
+        $content = 'admin/editPackage.php'; // View for editing the package
+        require_once 'views/admin/adminLayout.php';
+    }
+
+    // Delete a package
+    public function deletePackage() {
+        $id = $_GET['id'];
+        $this->packageModel->deletePackage($id);
+        header('Location: /travel/admin/packages');
+        exit;
     }
 }

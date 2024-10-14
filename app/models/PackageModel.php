@@ -1,64 +1,46 @@
-// app/models/Package.php
+<?php
+// app/models/PackageModel.php
 
-class Package {
+class PackageModel {
     private $db;
 
-    public function __construct() {
-        // Assuming you have a Database class for managing DB connections
-        $this->db = new Database;
+    public function __construct($db) {
+        $this->db = $db;
     }
 
     // Add a new package
-    public function addPackage($data) {
-        $this->db->query('INSERT INTO packages (name, description, price, image) VALUES (:name, :description, :price, :image)');
-        $this->db->bind(':name', $data['name']);
-        $this->db->bind(':description', $data['description']);
-        $this->db->bind(':price', $data['price']);
-        $this->db->bind(':image', $data['image']); // Image field
-        return $this->db->execute();
+    public function addPackage($name, $description, $price, $image) {
+        $stmt = $this->db->prepare("INSERT INTO packages (name, description, price, image) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$name, $description, $price, $image]);
     }
 
     // Get all packages
-    public function getPackages() {
-        $this->db->query('SELECT * FROM packages');
-        return $this->db->resultSet();
+    public function getAllPackages() {
+        $stmt = $this->db->query("SELECT * FROM packages");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Edit a package (Not fully implemented)
-    public function editPackage($id) {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $name = $_POST['package-name'];
-        $description = $_POST['package-description'];
-        $price = $_POST['package-price'];
-
-        // Update the package in the database
-        $sql = "UPDATE packages SET name = :name, description = :description, price = :price WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':name', $name);
-        $stmt->bindValue(':description', $description);
-        $stmt->bindValue(':price', $price);
-        $stmt->bindValue(':id', $id);
-        
-        $stmt->execute();
-        header("Location: /travel/admin/package");
-    } else {
-        // Fetch package data
-        $sql = "SELECT * FROM packages WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':id', $id);
-        $stmt->execute();
-        $package = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Load the edit view and pass package details
-        include 'app/views/admin/editPackage.php';
+    // Get a package by ID
+    public function getPackageById($id) {
+        $stmt = $this->db->prepare("SELECT * FROM packages WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-}
 
+    // Update a package
+    public function updatePackage($id, $name, $description, $price, $image = null) {
+        if ($image) {
+            $stmt = $this->db->prepare("UPDATE packages SET name = ?, description = ?, price = ?, image = ? WHERE id = ?");
+            return $stmt->execute([$name, $description, $price, $image, $id]);
+        } else {
+            $stmt = $this->db->prepare("UPDATE packages SET name = ?, description = ?, price = ? WHERE id = ?");
+            return $stmt->execute([$name, $description, $price, $id]);
+        }
+    }
 
     // Delete a package
     public function deletePackage($id) {
-        $this->db->query('DELETE FROM packages WHERE id = :id');
-        $this->db->bind(':id', $id);
-        return $this->db->execute();
+        $stmt = $this->db->prepare("DELETE FROM packages WHERE id = ?");
+        return $stmt->execute([$id]);
     }
 }

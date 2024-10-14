@@ -313,7 +313,6 @@ body {
 .cardBox {
   position: relative;
   width: 100%;
-  padding: 20px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 30px;
@@ -565,4 +564,56 @@ body {
     right: 0;
     left: initial;
   }
+}
+
+
+.user-options {
+  position: relative;
+  display: inline-block;
+  right: 15px;
+}
+
+.user-profile {
+  cursor: pointer;
+
+
+  background-size: cover; /* Ensures the image covers the whole div */
+  background-position: center; /* Centers the image within the div */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+}
+
+.user-profile img {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+.dropdown {
+  display: none; /* Initially hidden */
+  position: absolute;
+  top: 45x; /* Position below the profile picture */
+  right: 0;
+  background-color: #ffffff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 150px; /* Adjust as needed */
+}
+
+.dropdown li {
+  padding: 10px;
+}
+
+.dropdown li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.dropdown li a:hover {
+  background-color: #f1f1f1;
 }

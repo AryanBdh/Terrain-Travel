@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 <body>
     <div class="signin-container">
         <div class="left-column">
-            <h1>Travelista Tours</h1>
+            <h1>    </h1>
             <p>Discover the world, one journey at a time</p>
         </div>
         <div class="right-column">

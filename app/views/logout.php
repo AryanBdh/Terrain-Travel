@@ -3,5 +3,5 @@ session_unset();
 
 session_destroy();
 
-header('Location: /travel/login');
+header('Location: /travel/home');
 ?>

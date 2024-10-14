@@ -47,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 <body>
     <div class="signin-container">
         <div class="left-column">
-            <h1>Travelista Tours</h1>
+            <h1></h1>
             <p>Begin your journey with us today</p>
         </div>
         <div class="right-column">
             <h2>Create an Account</h2>
-            <p>Join Travelista Tours for amazing travel experiences</p>
+            <p></p>
 
             <!-- Display error or success message -->
             <?php if (isset($_SESSION['error'])): ?>

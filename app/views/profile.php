@@ -1,6 +1,5 @@
 <?php
 
-
 // Include database connection
 include './config/config.php'; // Include the configuration file
 
@@ -71,13 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (mysqli_query($mysqli, $updateQuery)) {
                     $_SESSION['success'] = "Profile picture updated successfully.";
                     $_SESSION['profile_image'] = $targetFile; // Update session with the new profile image path
+
+                    // Redirect after updating session to reload the page and reflect new image
+                    header('Location: /travel/profile');
+                    exit();
                 } else {
                     $_SESSION['error'] = "Failed to update profile picture in the database.";
                 }
-
-                // Redirect to profile page after updating the image
-                header('Location: /travel/profile');
-                exit();
             } else {
                 $_SESSION['error'] = "Failed to upload profile picture.";
             }
@@ -114,7 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Use the userId variable to construct the profile image path
             $profileImagePath = '/travel/public/images/profile_images/' . $userId . '.png';
             $defaultImage = '/travel/public/images/default.png';
-            $profileImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath : $defaultImage;
+            
+            // Force image refresh by appending the current timestamp
+            $profileImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath . '?' . time() : $defaultImage;
             ?>
             <div class="pic-img">
                 <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile Picture" class="profile-pic-large">
