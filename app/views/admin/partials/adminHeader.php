@@ -39,7 +39,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
         <li>
             <a href="/travel/admin/destination">
                 <span class="icon">
-                    <ion-icon name="chatbubble-outline"></ion-icon>
+                    <ion-icon name="map-outline"></ion-icon>
                 </span>
                 <span class="title">Destination</span>
             </a>

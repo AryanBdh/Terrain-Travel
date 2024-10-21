@@ -14,6 +14,8 @@ $router->post('/admin/packages', 'PackageController@addPackage');
 $router->get('/admin/editPackage', 'PackageController@editPackage');
 $router->post('/admin/editPackage', 'PackageController@editPackage');
 $router->get('/admin/deletePackage', 'PackageController@deletePackage');
+$router->get('/', 'HomeController@index');
+
 
 // Dispatch the request
 $router->dispatch();

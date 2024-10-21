@@ -17,31 +17,22 @@ include './config/config.php';
 
         <div class="package">
             <h2>Popular Packages</h2>
-            <div class="package-carousel">
-                <!-- <button class="carousel-btn prev-btn">&lt;</button>
-    <button class="carousel-btn next-btn">&gt;</button> -->
-                <div class="package-container">
-
-                    <?php
-                    $query = "SELECT * FROM packages";
-                    $result = mysqli_query($mysqli, $query);
-                    while ($package = mysqli_fetch_assoc($result)) {
-                        ?>
+            <div class="package-container">
+                <?php if (!empty($packages)): ?>
+                    <?php foreach ($packages as $package): ?>
                         <div class="package-card">
-                            <div class="package-image">
-                                <img src="./public/images/packages/<?= $package['image'] ?>"
-                                    alt="<?= htmlspecialchars($package['name']) ?>">
-                                <div class="overlay">
-                                    <h3><?= htmlspecialchars($package['name']) ?></h3>
-                                    <a href="/travel/packages/<?= $package['id'] ?>" class="btn">See More</a>
-                                </div>
-                            </div>
+                            <?php
+                            $imagePath = "/travel/public/images/packages/" . htmlspecialchars($package->image);
+                            echo "<p>Image path: $imagePath</p>";  // Debug: Print the image path
+                            ?>
+                            <img src="<?php echo $imagePath; ?>" alt="Package Image">
+                            <h3><?php echo htmlspecialchars($package->name); ?></h3>
+                            <p><?php echo htmlspecialchars($package->description); ?></p>
+                            <p><strong>Price:</strong> $<?php echo htmlspecialchars($package->price); ?></p>
+                            <a href="/travel/packages/details?id=<?php echo $package->id; ?>" class="btn">View Details</a>
                         </div>
-                        <?php
-                    }
-                    ?>
-                </div>
-                <!-- Carousel Navigation Buttons -->
+                    <?php endforeach; ?>
+                <?php endif; ?>
 
             </div>
         </div>

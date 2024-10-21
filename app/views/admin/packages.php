@@ -1,10 +1,4 @@
-<!-- app/views/admin/package.php -->
-
-
-
-
 <div class="packages-section">
-    <!-- Packages Form -->
     <div class="package-form">
         <h2>Add New Package</h2>
         <form action="/travel/admin/packages" method="POST" enctype="multipart/form-data">
@@ -25,13 +19,12 @@
         </form>
     </div>
 
-    <!-- List of Packages -->
     <div class="package-list">
         <h2>Available Packages</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Package Name</th>
+                    <th>Name</th>
                     <th>Description</th>
                     <th>Price</th>
                     <th>Image</th>
@@ -42,16 +35,15 @@
                 <?php if (!empty($packages)): ?>
                     <?php foreach ($packages as $package): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($package['name']); ?></td>
-                            <td><?php echo htmlspecialchars($package['description']); ?></td>
-                            <td><?php echo htmlspecialchars($package['price']); ?></td>
-                            <td><img src="/uploads/<?php echo htmlspecialchars($package['image']); ?>" width="50"></td>
-                            <td>
-                                <a href="/travel/admin/editPackage?id=<?php echo $package['id']; ?>">Edit</a>
-                                <a href="/travel/admin/deletePackage?id=<?php echo $package['id']; ?>"
-                                    onclick="return confirm('Are you sure?')">Delete</a>
-                            </td>
-                        </tr>
+                    <td><?= htmlspecialchars($package->name); ?></td>
+                    <td><?= htmlspecialchars($package->description); ?></td>
+                    <td><?= htmlspecialchars($package->price); ?></td>
+                    <td><img src="/travel/public/images/packages/<?= htmlspecialchars($package->image); ?>" alt="<?= htmlspecialchars($package->name); ?>" width="100"></td>
+                    <td>
+                        <a href="/travel/admin/editPackage?id=<?= $package->id; ?>">Edit</a>
+                        <a href="/travel/admin/deletePackage?id=<?= $package->id; ?>">Delete</a>
+                    </td>
+                </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>

@@ -8,6 +8,7 @@ class Database {
     private $stmt;
     private $error;
 
+
     public $conn;
 
 
@@ -46,7 +47,7 @@ class Database {
         $this->stmt = $this->dbh->prepare($sql);
     }
 
-    // Bind values to the statement
+    // Bind parameters
     public function bind($param, $value, $type = null) {
         if (is_null($type)) {
             switch (true) {
@@ -66,18 +67,17 @@ class Database {
         $this->stmt->bindValue($param, $value, $type);
     }
 
-    // Execute the prepared statement
+    // Execute the query
     public function execute() {
         return $this->stmt->execute();
     }
 
-    // Get result set as array of objects
+    // Fetch all results as an array of objects
     public function resultSet() {
-        $this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    // Get a single record as an object
+    // Fetch a single result as an object
     public function single() {
         $this->execute();
         return $this->stmt->fetch(PDO::FETCH_OBJ);

@@ -1,46 +1,67 @@
 <?php
-// app/models/PackageModel.php
 
-class PackageModel {
+class PackageModel
+{
     private $db;
 
-    public function __construct($db) {
-        $this->db = $db;
+    public function __construct($database)
+    {
+        $this->db = $database->dbConnection();
+    }
+
+    // Fetch all packages
+    public function getAllPackages()
+    {
+        $sql = "SELECT * FROM packages";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        return $result;
     }
 
     // Add a new package
-    public function addPackage($name, $description, $price, $image) {
-        $stmt = $this->db->prepare("INSERT INTO packages (name, description, price, image) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$name, $description, $price, $image]);
+    public function addPackage($name, $description, $price, $image)
+    {
+        $sql = "INSERT INTO packages (name, description, price, image) VALUES (:name, :description, :price, :image)";
+        $this->db->query($sql);
+        $this->db->bind(':name', $name);
+        $this->db->bind(':description', $description);
+        $this->db->bind(':price', $price);
+        $this->db->bind(':image', $image);
+        return $this->db->execute();
     }
 
-    // Get all packages
-    public function getAllPackages() {
-        $stmt = $this->db->query("SELECT * FROM packages");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Get a package by ID
-    public function getPackageById($id) {
-        $stmt = $this->db->prepare("SELECT * FROM packages WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    // Get package by ID
+    public function getPackageById($id)
+    {
+        $this->db->query("SELECT * FROM packages WHERE id = :id");
+        $this->db->bind(':id', $id);
+        return $this->db->single();
     }
 
     // Update a package
-    public function updatePackage($id, $name, $description, $price, $image = null) {
+    public function updatePackage($id, $name, $description, $price, $image = null)
+    {
+        $sql = $image
+            ? "UPDATE packages SET name = :name, description = :description, price = :price, image = :image WHERE id = :id"
+            : "UPDATE packages SET name = :name, description = :description, price = :price WHERE id = :id";
+        $this->db->query($sql);
+        $this->db->bind(':id', $id);
+        $this->db->bind(':name', $name);
+        $this->db->bind(':description', $description);
+        $this->db->bind(':price', $price);
         if ($image) {
-            $stmt = $this->db->prepare("UPDATE packages SET name = ?, description = ?, price = ?, image = ? WHERE id = ?");
-            return $stmt->execute([$name, $description, $price, $image, $id]);
-        } else {
-            $stmt = $this->db->prepare("UPDATE packages SET name = ?, description = ?, price = ? WHERE id = ?");
-            return $stmt->execute([$name, $description, $price, $id]);
+            $this->db->bind(':image', $image);
         }
+        return $this->db->execute();
     }
 
     // Delete a package
-    public function deletePackage($id) {
-        $stmt = $this->db->prepare("DELETE FROM packages WHERE id = ?");
-        return $stmt->execute([$id]);
+    public function deletePackage($id)
+    {
+        $this->db->query("DELETE FROM packages WHERE id = :id");
+        $this->db->bind(':id', $id);
+        return $this->db->execute();
     }
 }

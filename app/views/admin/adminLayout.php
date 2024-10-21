@@ -5,18 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Travel Nepal</title>
-    <!-- Admin-specific CSS -->
     <link rel="stylesheet" href="/travel/public/css/admin.css">
 </head>
 
 <body>
-    <!-- Admin Container that wraps both the navigation and the main content -->
     <div class="admin-container">
 
-        <!-- Include adminHeader.php which contains the navigation (sidebar) -->
         <?php include 'partials/adminHeader.php'; ?>
 
-        <!-- Main Section for dynamic content -->
         <main class="main">
             <div class="topbar">
                 <div class="toggle">
@@ -57,7 +53,6 @@
             </div>
             <div class="main-content">
                 <?php
-                // Include the dynamic content for the admin page
                 if (isset($content)) {
                     include $content;
                 } else {
@@ -66,39 +61,36 @@
                 ?>
             </div>
         </main>
-    </div> <!-- End of admin-container -->
+    </div> 
 
-    <!-- Admin-specific scripts -->
     <script>
-        // JavaScript to handle dropdown visibility
-        document.addEventListener('DOMContentLoaded', function () {
-            var userProfile = document.getElementById('userProfile');
-            var userDropdown = document.getElementById('userDropdown');
+    document.addEventListener('DOMContentLoaded', function () {
+        var userProfile = document.getElementById('userProfile');
+        var userDropdown = document.getElementById('userDropdown');
 
-            userDropdown.style.display = 'none'; // Initially hide the dropdown
+        userDropdown.style.display = 'none'; // Initially hide the dropdown
 
-            userProfile.addEventListener('click', function (event) {
-                userDropdown.style.display = (userDropdown.style.display === 'none') ? 'block' : 'none';
-                event.preventDefault();
-            });
-
-            document.addEventListener('click', function (event) {
-                if (!userProfile.contains(event.target)) {
-                    userDropdown.style.display = 'none';
-                }
-            });
+        userProfile.addEventListener('click', function (event) {
+            userDropdown.style.display = (userDropdown.style.display === 'none') ? 'block' : 'none';
+            event.preventDefault();
         });
 
-        let list = document.querySelectorAll(".navigation li");
+        document.addEventListener('click', function (event) {
+            if (!userProfile.contains(event.target)) {
+                userDropdown.style.display = 'none';
+            }
+        });
+
+        let navList = document.querySelectorAll(".navigation li");
 
         function activeLink() {
-            list.forEach((item) => {
+            navList.forEach((item) => {
                 item.classList.remove("hovered");
             });
             this.classList.add("hovered");
         }
 
-        list.forEach((item) => item.addEventListener("mouseover", activeLink));
+        navList.forEach((item) => item.addEventListener("mouseover", activeLink));
 
         // Menu Toggle
         let toggle = document.querySelector(".toggle");
@@ -109,7 +101,9 @@
             navigation.classList.toggle("active");
             main.classList.toggle("active");
         };
-    </script>
+    });
+</script>
+    
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
