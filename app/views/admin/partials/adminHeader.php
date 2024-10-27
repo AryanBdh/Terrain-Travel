@@ -54,5 +54,26 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
             </a>
         </li>
 
+        <li>
+            <a href="/travel/admin/guide">
+                <span class="icon">
+                    <ion-icon name="guide-outline"></ion-icon>
+                </span>
+                <span class="title">Guides</span>
+            </a>
+        </li>
+
+        <!-- a logout button that will destroy the session and redirect the user to the home page -->
+
+        <li>
+            <a href="/travel/logout">
+                <span class="icon">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                </span>
+                <span class="title">Logout</span>
+            </a>
+        </li>
+        
+
     </ul>
 </div>

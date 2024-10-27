@@ -31,7 +31,6 @@ class Router {
     // Function to handle admin requests
     private function handleAdminRequest($url) {
 
-        include 'routes.php';        // Strip 'admin/' from the URL and determine the content path
         $filePath = 'app/views/admin/' . str_replace('admin/', '', $url) . '.php';
 
         // Check if the requested admin content file exists

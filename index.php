@@ -1,23 +1,16 @@
 <?php
 session_start();
-// Include the configuration file
-include './config/config.php';
 
-// Include the Router class
+// Include the configuration file and Router class
+include './config/config.php';
 include './core/Router.php';
 
 // Create a new Router instance
 $router = new Router();
 
-$router->get('/admin/packages', 'PackageController@index');
-$router->post('/admin/packages', 'PackageController@addPackage');
-$router->get('/admin/editPackage', 'PackageController@editPackage');
-$router->post('/admin/editPackage', 'PackageController@editPackage');
-$router->get('/admin/deletePackage', 'PackageController@deletePackage');
-$router->get('/', 'HomeController@index');
-
+// Include routes
+include './core/routes.php';
 
 // Dispatch the request
 $router->dispatch();
-
-?>
+?>  

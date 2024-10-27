@@ -52,13 +52,7 @@
 
             </div>
             <div class="main-content">
-                <?php
-                if (isset($content)) {
-                    include $content;
-                } else {
-                    echo '<p>Admin page content not found.</p>';
-                }
-                ?>
+             <?php if (isset($content)) include $content; ?>
             </div>
         </main>
     </div> 
@@ -108,6 +102,6 @@
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
-</body>
+
 
 </html>
