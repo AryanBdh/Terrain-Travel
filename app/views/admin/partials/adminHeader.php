@@ -12,7 +12,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
         <li>
             <a href="#">
                 <span class="icon">
-                    <ion-icon name="logo-apple"></ion-icon>
+                    <ion-icon name=""></ion-icon>
                 </span>
                 <span class="title">Brand Name</span>
             </a>
@@ -37,15 +37,6 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
         </li>
 
         <li>
-            <a href="/travel/admin/destination">
-                <span class="icon">
-                    <ion-icon name="map-outline"></ion-icon>
-                </span>
-                <span class="title">Destination</span>
-            </a>
-        </li>
-
-        <li>
             <a href="/travel/admin/packages">
                 <span class="icon">
                     <ion-icon name="briefcase-outline"></ion-icon>
@@ -57,7 +48,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
         <li>
             <a href="/travel/admin/guide">
                 <span class="icon">
-                    <ion-icon name="guide-outline"></ion-icon>
+                    <ion-icon name="trail-sign-outline"></ion-icon>
                 </span>
                 <span class="title">Guides</span>
             </a>

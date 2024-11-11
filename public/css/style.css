@@ -44,6 +44,21 @@ nav ul li a {
     font-weight: bold;
 }
 
+@media (max-width: 320px) {
+    /* Hide nav items except for logo and sign-in/user profile */
+    nav ul {
+        display: none;
+    }
+
+    .container {
+        justify-content: space-between;
+    }
+
+    .user-options, .sign-in-btn {
+        display: flex; /* Keep user profile or sign-in button visible */
+    }
+}
+
 
 
 .sign-in-btn {
@@ -119,6 +134,7 @@ nav ul li a {
 .home-container {
     width: 95%;
     margin: 0 auto;
+    
 }
 
 /* image */
@@ -160,74 +176,126 @@ nav ul li a {
 .package h2 {
     text-align: center;
     margin-bottom: 20px;
-    margin-top:50px ;
+    margin-top: 50px;
 }
 
 .package-container {
     display: flex;
-    overflow: hidden; /* Hides the overflow content */
+    justify-content: center; /* Center or use space-around */
+    flex-wrap: wrap;
+    gap: 10px; 
+    padding: -2 20px; /* Optional padding to keep cards away from edges */
     position: relative;
+	overflow: hidden;
 }
 
 .package-card {
-    flex: 0 0 25%; /* Adjust this to control how many cards are visible at once */
-    position: relative;
-    margin: 0 10px;
+    flex: 1 1 calc(25% - 20px); /* Calculate width to include the gap */
     overflow: hidden; /* Hide any content overflow */
-    transition: transform 0.3s ease;
-}
-
-.package-image {
     position: relative;
+    border-radius: 10px;
 }
 
 .package-card img {
     width: 100%;
+    height: 450px;
     display: block;
-    transition: opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    filter: brightness(85%);
 }
 
-.package-card:hover img {
-    opacity: 0.7; /* Adjust to control the fade on hover */
-}
 
-.overlay {
+
+.package-detail{
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    padding: 20px;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5); /* Adjust for overlay color */
-    color: #fff;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.595);
+    line-height: 1;
 }
 
-.package-card:hover .overlay {
-    opacity: 1;
+.package-detail h3{
+    font-size: 30px;
+    margin-bottom: 10px;
 }
 
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #fff;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+.package-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Ensures the link takes up the full card space */
 }
 
-.prev-btn {
-    left: 10px;
+.why-choose-us {
+    position: relative;
+    width: 96.85vw;
+    margin-left: calc(-50vw + 50%);
+    background-image: url('../images/why-choose-us.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+    margin-top: 50px;
 }
 
-.next-btn {
-    right: 10px;
+.why-choose-us h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
 }
+
+.why-choose-us .subheading {
+    font-size: 18px;
+    margin-bottom: 40px;
+    color: #e0e0e0;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.card .icon ion-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    font-size: 22px;
+    margin: 10px 0;
+}
+
+.card p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+
+
 
 
 /*home*/
@@ -407,6 +475,131 @@ button {
 }
 /*login*/
 
+/* register */
+.registration-container {
+    width: 70%;
+    display: flex;
+    height: 90%;
+    margin: 18px auto;
+    box-shadow:  0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.registration-left-column {
+    background-image: url('../images/login.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.registration-left-column::after {
+    content: '';
+    background: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.registration-left-column h1,
+.registration-left-column p {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.registration-right-column {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.registration-right-column h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.notification .error {
+    color: red;
+    text-align: center;
+}
+
+.notification .success {
+    color: green;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 2rem;
+}
+
+.form-row .half {
+    flex: 1;
+}
+
+.form-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #0D6577;
+    color: #ffffff;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.form-button:hover {
+    background-color: #00695c;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.form-footer a {
+    color: #0D6577;
+    text-decoration: none;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+/* register */
+
+
 /*profile*/
 .profile-container {
     width: 70%;
@@ -458,3 +651,28 @@ button {
 
 
 /*profile*/
+
+
+/*package-detail*/
+.package-detail-container {
+    width: 95%;
+    margin: 0 auto;
+   
+}
+
+.package-image{
+    width: 100%;
+    height: 80vh;
+}
+
+.package-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+
+/*package-detail*/

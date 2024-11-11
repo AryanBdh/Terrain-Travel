@@ -52,17 +52,20 @@
         var userProfile = document.getElementById('userProfile');
         var userDropdown = document.getElementById('userDropdown');
 
-        userDropdown.style.display = 'none'; // Initially hide the dropdown
+        // Only proceed if both elements exist
+        if (userProfile && userDropdown) {
+            userDropdown.style.display = 'none'; // Initially hide the dropdown
 
-        userProfile.addEventListener('click', function (event) {
-            userDropdown.style.display = (userDropdown.style.display === 'none') ? 'block' : 'none';
-            event.preventDefault();
-        });
+            userProfile.addEventListener('click', function (event) {
+                userDropdown.style.display = (userDropdown.style.display === 'none') ? 'block' : 'none';
+                event.preventDefault();
+            });
 
-        document.addEventListener('click', function (event) {
-            if (!userProfile.contains(event.target)) {
-                userDropdown.style.display = 'none';
-            }
-        });
+            document.addEventListener('click', function (event) {
+                if (!userProfile.contains(event.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            });
+        }
     });
 </script>
