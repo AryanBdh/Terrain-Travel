@@ -2,7 +2,7 @@
     <div class="container">
         <div class="logo">
             <a href="/travel/home">
-                <img src="/travel/assets/images/logo.png" alt="Logo">
+                <img src="/travel/public/images/logo/travellogo.png" alt="Logo">
             </a>
         </div>
         <nav>

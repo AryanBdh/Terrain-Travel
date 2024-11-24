@@ -20,8 +20,15 @@ header {
     align-items: center;
 }
 
-.logo img {
-    height: 40px;
+.container .logo {
+    display: flex;
+    align-items: center;
+}
+
+.container .logo img {
+    height: 35px; /* Allow the height to scale with the width */
+    max-height: 100px; /* Set a max height to prevent the container from expanding */
+    width: 180px; /* Maintain the aspect ratio */
 }
 
 nav ul {
@@ -181,7 +188,7 @@ nav ul li a {
 
 .package-container {
     display: flex;
-    justify-content: center; /* Center or use space-around */
+    justify-content: left; /* Center or use space-around */
     flex-wrap: wrap;
     gap: 10px; 
     padding: -2 20px; /* Optional padding to keep cards away from edges */
@@ -190,10 +197,16 @@ nav ul li a {
 }
 
 .package-card {
+    max-width: 25%;
     flex: 1 1 calc(25% - 20px); /* Calculate width to include the gap */
     overflow: hidden; /* Hide any content overflow */
     position: relative;
     border-radius: 10px;
+}
+
+.package-container:only-child .package-card {
+    flex: 1 1 300px; /* Set a specific width for a single package */
+    margin: 0 auto; /* Center the single package */
 }
 
 .package-card img {
@@ -550,11 +563,15 @@ button {
 
 .form-group input,
 .form-group select {
-    width: 100%;
+    width: 94%;
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
+}
+
+.half input{
+    width: 87%;
 }
 
 .form-row {
@@ -676,3 +693,172 @@ button {
 
 
 /*package-detail*/
+
+/* Booking Form Container */
+.booking-form-container {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+#booking-form.show {
+    display: flex;
+}
+/* Form Sections */
+.form-section {
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Submit Button */
+.form-group.submit {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-submit {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+/* Book Now Button */
+.btn-book-now {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-book-now:hover {
+    background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .booking-form-container {
+        flex-direction: column;
+    }
+
+    .form-section {
+        width: 100%;
+    }
+}
+/* Booking Form Container */
+
+/*footer*/
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.footer .footer-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.footer-logo img {
+    max-height: 50px;
+}
+
+.footer-links, .footer-contact, .footer-social {
+    margin-top: 20px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-links h3, 
+.footer-contact h3, 
+.footer-social h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.footer-links ul, 
+.footer-contact ul, 
+.footer-social ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li, 
+.footer-contact li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #f39c12;
+}
+
+.footer-social ul {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-social a {
+    color: #fff;
+    font-size: 1.5em;
+    transition: color 0.3s;
+}
+
+.footer-social a:hover {
+    color: #f39c12;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+    color: #888;
+}
+
+/*footer*/
