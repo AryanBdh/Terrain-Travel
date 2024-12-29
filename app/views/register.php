@@ -19,17 +19,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // Prepare the SQL statement
-        $stmt = $mysqli->prepare("INSERT INTO users (username, email,phone_no, password, user_type) VALUES (?, ?, ?, ?, ?)");
+        // Start a transaction to ensure data integrity
+        $mysqli->begin_transaction();
 
-        // Bind parameters
-        $stmt->bind_param('sssss', $username, $email, $phone_no , $hashedPassword, $userType);
+        try {
+            // Insert into the users table
+            $stmt = $mysqli->prepare("INSERT INTO users (username, email, phone_no, password, user_type) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param('sssss', $username, $email, $phone_no, $hashedPassword, $userType);
 
-        // Execute the statement
-        if ($stmt->execute()) {
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to insert into users table.");
+            }
+
+            // If user type is agency, insert into the travel_agency table
+            if ($userType === 'agency') {
+                $agencyStmt = $mysqli->prepare("INSERT INTO travel_agency (name, email, phone_no, password) VALUES (?, ?, ?, ?)");
+                $agencyStmt->bind_param('ssss', $username, $email, $phone_no, $hashedPassword);
+
+                if (!$agencyStmt->execute()) {
+                    throw new Exception("Failed to insert into travel_agency table.");
+                }
+
+                $agencyStmt->close();
+            }
+
+            // Commit the transaction
+            $mysqli->commit();
+
             $_SESSION['success'] = "Registration successful!";
-        } else {
-            $_SESSION['error'] = "Registration failed. Please try again.";
+        } catch (Exception $e) {
+            // Rollback transaction in case of error
+            $mysqli->rollback();
+            $_SESSION['error'] = "Registration failed: " . $e->getMessage();
         }
 
         // Close the statement
@@ -41,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     exit();
 }
 ?>
+
 
 
 
@@ -97,6 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             <select id="user-type" name="user_type">
                 <option value="tourist">Tourist</option>
                 <option value="guide">Guide</option>
+                <option value="agency">Agency</option>
             </select>
         </div>
 

@@ -102,6 +102,15 @@ body {
   white-space: nowrap;
 }
 
+.navigation ul li a img {
+  position: relative;
+  display: block;
+  margin-top: 5px;
+  width: 250px;
+  height: 40px;
+  object-fit: cover;
+}
+
 /* --------- curve outside ---------- */
 .navigation ul li:hover a::before,
 .navigation ul li.hovered a::before {

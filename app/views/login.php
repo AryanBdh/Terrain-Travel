@@ -1,49 +1,44 @@
 <?php
-include './config/config.php'; // Include the configuration file
+include './config/config.php';
 
-// Hardcoded admin credentials
-define('ADMIN_EMAIL', 'admin@gmail.com'); // Replace with your hardcoded admin email
-define('ADMIN_PASSWORD', 'admin123'); // Replace with your hardcoded admin password
+define('ADMIN_EMAIL', 'admin@gmail.com');
+define('ADMIN_PASSWORD', 'admin123');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
-    // Retrieve and sanitize input
     $email = htmlspecialchars(trim($_POST['email']));
     $password = htmlspecialchars(trim($_POST['password']));
 
-    // Validate inputs
     if (empty($email) || empty($password)) {
         $_SESSION['loginError'] = "Email and password are required.";
     } else {
-        // Check if credentials match hardcoded admin credentials
         if ($email === ADMIN_EMAIL && $password === ADMIN_PASSWORD) {
-            // Admin credentials are correct, set session for admin
             $_SESSION['is_admin'] = true;
-            $_SESSION['user_id'] = 'admin'; // Use a unique identifier for admin
+            $_SESSION['user_id'] = 'admin';
             $_SESSION['email'] = $email;
-            // Redirect to admin dashboard
             header("Location: /travel/admin/dashboard");
             exit;
         } else {
-            // Check credentials in the database for regular users
             $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
             if ($conn->connect_error) {
                 die("Connection failed: " . $conn->connect_error);
             }
 
-            $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+            $stmt = $conn->prepare("SELECT id, password, user_type FROM users WHERE email = ?");
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows === 1) {
                 $user = $result->fetch_assoc();
-                // Verify the password
                 if (password_verify($password, $user['password'])) {
-                    // Password is correct, set session for regular user
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['email'] = $email;
-                    // Redirect to home page
-                    header("Location: /travel/home");
+                    $_SESSION['user_type'] = $user['user_type'];
+                    if ($user['user_type'] === 'agency') {
+                        header("Location: /travel/agency/dashboard");
+                    } else {
+                        header("Location: /travel/home");
+                    }
                     exit;
                 } else {
                     $_SESSION['loginError'] = "Invalid email or password.";
@@ -56,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
         }
     }
 
-    // Redirect to clear POST data and display messages only once
     header("Location: /travel/login");
     exit;
 }
@@ -66,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 <body>
     <div class="signin-container">
         <div class="left-column">
-            <h1>    </h1>
+            <h1> </h1>
             <p>Discover the world, one journey at a time</p>
         </div>
         <div class="right-column">
@@ -93,4 +87,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     </div>
     <script src="assets/js/signin.js"></script>
 </body>
-

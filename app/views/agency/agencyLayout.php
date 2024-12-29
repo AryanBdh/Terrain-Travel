@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Travel Nepal</title>
+    <title>Agency - Travel Nepal</title>
     <link rel="stylesheet" href="/travel/public/css/admin.css">
 </head>
 
 <body>
     <div class="admin-container">
 
-        <?php include 'partials/adminHeader.php'; ?>
+        <?php include 'agencyPartials/agencyHeader.php'; ?>
 
         <main class="main">
             <div class="topbar">
@@ -36,7 +36,7 @@
                             <li><a href="/travel/profile">View Profile</a></li>
 
                             <!-- Only show Dashboard if the user is admin -->
-                            <?php if ($_SESSION['email'] === 'admin@gmail.com' ): ?>
+                            <?php if ($_SESSION['user_type'] === 'agency'): ?>
                                 <li><a href="/travel/admin/dashboard">Dashboard</a></li>
                             <?php endif; ?>
 

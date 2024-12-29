@@ -63,10 +63,7 @@ if ($packageId > 0) {
                             <label for="num_people">Number of People:</label>
                             <input type="number" id="num_people" name="num_people" required>
                         </div>
-                        <div class="form-group">
-                            <label for="special_requests">Special Requests (optional):</label>
-                            <textarea id="special_requests" name="special_requests" rows="4"></textarea>
-                        </div>
+
                     </div>
 
                     <!-- Submit Button -->
@@ -79,14 +76,19 @@ if ($packageId > 0) {
 
         <!-- JavaScript for toggling the form -->
         <script>
-            document.getElementById('bookNowButton').addEventListener('click', function () {
-                const formContainer = document.getElementById('bookingFormContainer');
-                if (formContainer.style.display === 'none' || formContainer.style.display === '') {
-                    formContainer.style.display = 'block';
-                } else {
-                    formContainer.style.display = 'none';
-                }
-            });
+              document.addEventListener('DOMContentLoaded', function () {
+        const bookNowButton = document.getElementById('bookNowButton');
+        const bookingFormPanel = document.getElementById('bookingFormContainer');
+        const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+
+        bookNowButton.addEventListener('click', function () {
+            if (isLoggedIn) {
+                bookingFormPanel.style.display = 'block';
+            } else {
+                window.location.href = '/travel/login';
+            }
+        });
+    });
         </script>
     <?php else: ?>
         <p>Package not found.</p>

@@ -36,6 +36,10 @@
                 <li><a href="/travel/admin/dashboard">Dashboard</a></li>
             <?php endif; ?>
 
+            <?php if (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'agency'): ?>
+            <li><a href="/travel/agency/dashboard">Dashboard</a></li>
+        <?php endif; ?>
+
             <li><a href="/travel/logout">Logout</a></li>
         </ul>
     </li>

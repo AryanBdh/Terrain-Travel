@@ -9,10 +9,10 @@
                 <li><a href="/travel/home">Home</a></li>
                 <li><a href="/travel/about">About Us</a></li>
                 <li><a href="/travel/packages">Packages</a></li>
-                <li><a href="/travel/reviews">Reviews</a></li>
+                <li><a href="/travel/guide">Guides</a></li>
             </ul>
         </div>
-        <div class="footer-contact">
+        <div class="footer-links">
             <h3>Contact Information</h3>
             <ul>
                 <li>📍 Kathmandu</li>

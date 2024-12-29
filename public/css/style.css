@@ -187,61 +187,67 @@ nav ul li a {
 }
 
 .package-container {
+    width: 100%; 
+    margin: 0 auto;
     display: flex;
-    justify-content: left; /* Center or use space-around */
-    flex-wrap: wrap;
-    gap: 10px; 
-    padding: -2 20px; /* Optional padding to keep cards away from edges */
-    position: relative;
-	overflow: hidden;
+    justify-content: space-between; 
+    flex-wrap: wrap; 
+    gap: 20px; 
+    padding: 20px 0; 
 }
 
 .package-card {
-    max-width: 25%;
-    flex: 1 1 calc(25% - 20px); /* Calculate width to include the gap */
-    overflow: hidden; /* Hide any content overflow */
+    width: calc(25% - 20px); 
+    max-width: 340px; 
+    overflow: hidden;
     position: relative;
     border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.package-container:only-child .package-card {
-    flex: 1 1 300px; /* Set a specific width for a single package */
-    margin: 0 auto; /* Center the single package */
-}
+
 
 .package-card img {
-    width: 100%;
-    height: 450px;
+    width: 100%; 
+    height: 400px; 
     display: block;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    filter: brightness(85%);
+    object-fit: cover; 
+    filter: brightness(70%); 
+    transition: filter 0.3s ease;
 }
 
+.package-card:hover img {
+    filter: brightness(85%); 
+}
 
-
-.package-detail{
+.package-detail {
     position: absolute;
-    top: 48%;
+    bottom: 20px; 
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     color: white;
-    padding: 20px;
-    align-items: center;
     text-align: center;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.595);
-    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    line-height: 1.2;
 }
 
-.package-detail h3{
+.package-detail h3 {
     font-size: 30px;
-    margin-bottom: 10px;
+    margin-bottom: 60px;
+    font-weight: bold;
 }
+
+
 
 .package-card a {
     text-decoration: none;
     color: inherit;
-    display: block; /* Ensures the link takes up the full card space */
+    display: block;
 }
+
+
 
 .why-choose-us {
     position: relative;
@@ -360,7 +366,7 @@ nav ul li a {
 
 .guide-img img {
     width: 100%;
-    height: 100%;
+    height: 70%;
     object-fit: cover;
     background-size: cover;
     background-position: center;
@@ -368,9 +374,10 @@ nav ul li a {
 }
 
 .guide-banner-content {
-    width: 100%;
     position: absolute;
-    top: 40%;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
     color: white; 
     padding: 20px; 
     font-size: 50px;
@@ -705,6 +712,7 @@ button {
     display: flex;
     justify-content: space-between;
     gap: 20px;
+    margin-bottom: 20px;
 }
 
 #booking-form.show {
@@ -763,6 +771,7 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
 .btn-book-now:hover {
@@ -782,69 +791,76 @@ button {
 /* Booking Form Container */
 
 /*footer*/
+/* General Footer Styling */
+/* General Footer Styling */
 .footer {
-    background-color: #000;
-    color: #fff;
-    padding: 20px 0;
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
 }
 
-.footer .footer-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
+.footer-container {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    justify-content: space-between; /* Equal spacing between partitions */
+    align-items: center;
+    flex-wrap: nowrap; /* Ensure no wrapping */
+    max-width: 100%;
+}
+
+/* Footer Logo */
+.footer-logo {
+    flex: 1; /* Equal partition width */
+    text-align: center;
 }
 
 .footer-logo img {
-    max-height: 50px;
+    width: 300px;
+    height: auto;
+    display: block;
+    margin: auto;
 }
 
+/* Footer Links */
 .footer-links, .footer-contact, .footer-social {
-    margin-top: 20px;
-    flex: 1;
-    min-width: 200px;
+    flex: 1; /* Equal partition width */
+    text-align: center; /* Center text inside each partition */
 }
 
-.footer-links h3, 
-.footer-contact h3, 
-.footer-social h3 {
-    font-size: 1.2em;
+.footer-links h3, .footer-contact h3, .footer-social h3 {
+    font-size: 18px;
     margin-bottom: 10px;
 }
 
-.footer-links ul, 
-.footer-contact ul, 
-.footer-social ul {
+.footer-links ul, .footer-contact ul, .footer-social ul {
     list-style: none;
     padding: 0;
 }
 
-.footer-links li, 
-.footer-contact li {
+.footer-links li, .footer-contact li {
     margin-bottom: 8px;
 }
 
-.footer-links a {
+.footer-links a, .footer-social a {
     color: #fff;
     text-decoration: none;
     transition: color 0.3s;
 }
 
-.footer-links a:hover {
-    color: #f39c12;
+.footer-links a:hover, .footer-social a:hover {
+    color: #f39c12; /* Hover effect */
 }
 
+/* Social Media Styling */
 .footer-social ul {
     display: flex;
+    justify-content: center; /* Center the icons */
     gap: 10px;
 }
 
 .footer-social a {
+    font-size: 20px;
     color: #fff;
-    font-size: 1.5em;
     transition: color 0.3s;
 }
 
@@ -852,13 +868,14 @@ button {
     color: #f39c12;
 }
 
+/* Footer Bottom */
 .footer-bottom {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.9em;
-    border-top: 1px solid #333;
-    padding-top: 10px;
-    color: #888;
+    font-size: 14px;
+    color: #aaa;
 }
+
+  
 
 /*footer*/

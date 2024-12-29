@@ -1,7 +1,7 @@
 <?php
 // Prevent constant redefinition errors
 if (!defined('DB_HOST')) {
-    define('DB_HOST', 'localhost');
+    define('DB_HOST', 'localhost:3308');
 }
 if (!defined('DB_USER')) {
     define('DB_USER', 'root');
