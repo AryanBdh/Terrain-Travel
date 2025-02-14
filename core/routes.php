@@ -1,16 +1,5 @@
 <?php
-//Route definitions for agency package management
-$router->get('/travel/agency/packages', 'PackageController@index');
-$router->post('/travel/agency/packages', 'PackageController@addPackage');
-$router->get('/travel/agency/editPackage', 'PackageController@editPackage');
-$router->post('/travel/agency/editPackage', 'PackageController@editPackage');
-$router->get('/travel/agency/deletePackage', 'PackageController@deletePackage');
-// Agency package management routes
-$router->get('/travel/agency/packages', function() {
-    $controller = new AgencyPackageController();
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $controller->listPackages($page);
-});
+
 
 // Route definitions for admin package management
 $router->get('/travel/admin/packages', 'PackageController@index');

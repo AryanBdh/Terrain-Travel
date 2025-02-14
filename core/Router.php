@@ -23,10 +23,7 @@ class Router {
 
         if (strpos($url, 'admin') === 0) {
             $this->handleAdminRequest($url);
-            //if user type is agency
-        } else if (strpos($url, 'agency') === 0) {
-            $this->handleAgencyRequest($url);
-        } else{
+        }  else{
             $this->handlePublicRequest($url);
         }
     }
@@ -45,18 +42,7 @@ class Router {
         }
     }
 
-    // Function to handle agency requests
-    private function handleAgencyRequest($url) {
-
-        $filePath = 'app/views/agency/' . str_replace('agency/', '', $url) . '.php';
-
-        if (file_exists($filePath)) {
-            $content = $filePath;  // Dynamically set content
-            include './app/views/agency/agencyLayout.php';  // Load the admin layout
-        } else {
-            echo "<h1>Admin 404 Error</h1>";
-        }
-    }
+  
 
     private function handlePublicRequest($url) {
         $filePath = 'app/views/' . $url . '.php';

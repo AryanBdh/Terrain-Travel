@@ -1,99 +1,197 @@
 <?php
-include './config/config.php';
 require_once './config/db.php';
 
 $db = new Database();
 $conn = $db->dbConnection();
 
-// Get the package ID from the URL
+// Retrieve the package ID from the query string
 $packageId = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
+// Check if the form was submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST['no_of_people'], $_POST['package_id'])) {
+    // Sanitize and validate input
+    $packageId = intval($_POST['package_id']);
+    $travelDate = $_POST['travel_date'];
+    $numPeople = intval($_POST['no_of_people']);
+    
+    if (empty($travelDate) || $numPeople <= 0) {
+        $_SESSION['error'] = "Please fill in all required fields.";
+        header("Location: /travel/package/package-detail?id=$packageId");
+        exit;
+    }
+
+    // Retrieve the logged-in user's tourist ID
+    $touristIdQuery = "SELECT tourist_id FROM users WHERE id = ?";
+    $touristIdStmt = $conn->prepare($touristIdQuery);
+    $touristIdStmt->execute([$_SESSION['user_id']]);
+    $touristId = $touristIdStmt->fetchColumn();
+
+    if (!$touristId) {
+        $_SESSION['error'] = "User is not registered as a tourist.";
+        header("Location: /travel/login");
+        exit;
+    }
+
+    // Get the package details to calculate total cost
+    $packageQuery = "SELECT * FROM packages WHERE package_id = ?";
+    $packageStmt = $conn->prepare($packageQuery);
+    $packageStmt->execute([$packageId]);
+    $package = $packageStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$package) {
+        $_SESSION['error'] = "Package not found.";
+        header("Location: /travel/packages");
+        exit;
+    }
+
+    // Calculate the total cost
+    $packagePrice = $package['price'];
+    $totalCost = $packagePrice * $numPeople;
+
+    // Get the guide assigned to the package
+    $guideQuery = "SELECT guide_id FROM packages WHERE package_id = ?";
+    $guideStmt = $conn->prepare($guideQuery);
+    $guideStmt->execute([$packageId]);
+    $guide = $guideStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($guide) {
+        $guideId = $guide['guide_id'];
+    } else {
+        $_SESSION['error'] = "No guide assigned to this package.";
+        header("Location: /travel/package/package-detail?id=$packageId");
+        exit;
+    }
+
+    // Insert booking details into the booking table
+    $bookingQuery = "INSERT INTO booking (tourist_id, package_id, guide_id, booking_date,no_of_people, total_cost) VALUES (?, ?, ?, ?, ?,?)";
+    $bookingStmt = $conn->prepare($bookingQuery);
+    $bookingStmt->execute([$touristId, $packageId, $guideId, $travelDate, $numPeople, $totalCost]);
+
+    $_SESSION['message'] = "Booking successfully confirmed.";
+    header("Location: /travel/package/package-detail?id=$packageId");  // Redirect to the package page with success message
+    exit;
+}
+
+// Fetch package details to display
 if ($packageId > 0) {
     $stmt = $conn->prepare("SELECT * FROM packages WHERE package_id = ?");
     $stmt->execute([$packageId]);
     $package = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($package): ?>
-        <div class="package-detail-container">
-            <!-- Package Details -->
-            <div class="package-image">
-                <img src="/travel/public/images/packages/<?= htmlspecialchars($package['image']); ?>"
-                    alt="<?= htmlspecialchars($package['name']); ?>">
-            </div>
-            <div class="package-info">
-                <h1 class="package-title"><?= htmlspecialchars($package['name']); ?></h1>
-                <p class="package-description"><?= htmlspecialchars($package['description']); ?></p>
-                <p class="package-price">Price: Rs. <?= htmlspecialchars($package['price']); ?></p>
-            </div>
-
-            <!-- Booking Button -->
-            <div class="package-booking">
-                <h2>Book Now</h2>
-                <button id="bookNowButton" class="btn-book-now">Book Now</button>
-            </div>
-
-            <!-- Booking Form -->
-            <div id="bookingFormContainer" class="booking-form-container" style="display: none;">
-                <form id="booking-form" method="POST" action="/travel/book-package">
-                    <!-- Left Section: User Information -->
-                    <div class="form-section left">
-                        <h3>User Information</h3>
-                        <div class="form-group">
-                            <label for="name">Full Name:</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone_no">Phone Number:</label>
-                            <input type="number" id="phone_no" name="phone_no" required>
-                        </div>
-                    </div>
-
-                    <!-- Right Section: Travel Information -->
-                    <div class="form-section right">
-                        <h3>Travel Information</h3>
-                        <div class="form-group">
-                            <label for="travel_date">Travel Date:</label>
-                            <input type="date" id="travel_date" name="travel_date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="num_people">Number of People:</label>
-                            <input type="number" id="num_people" name="num_people" required>
-                        </div>
-
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="form-group submit">
-                        <button type="submit" class="btn-submit">Confirm Booking</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- JavaScript for toggling the form -->
-        <script>
-              document.addEventListener('DOMContentLoaded', function () {
-        const bookNowButton = document.getElementById('bookNowButton');
-        const bookingFormPanel = document.getElementById('bookingFormContainer');
-        const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
-
-        bookNowButton.addEventListener('click', function () {
-            if (isLoggedIn) {
-                bookingFormPanel.style.display = 'block';
-            } else {
-                window.location.href = '/travel/login';
-            }
-        });
-    });
-        </script>
-    <?php else: ?>
-        <p>Package not found.</p>
-    <?php endif;
+    if (!$package) {
+        $_SESSION['error'] = "Invalid package ID.";
+        header("Location: /travel/packages");
+        exit;
+    }
 } else {
-    echo "<p>Invalid package ID.</p>";
+    $_SESSION['error'] = "Invalid package ID.";
+    header("Location: /travel/packages");
+    exit;
 }
 ?>
+
+
+
+
+<?php if ($package): ?>
+    
+    <div class="package-detail-container">
+        <!-- Package Details -->
+        <div class="package-image">
+            <img src="/travel/public/images/packages/<?= htmlspecialchars($package['image']); ?>"
+                alt="<?= htmlspecialchars($package['name']); ?>">
+        </div>
+        <div class="package-info">
+            <h1 class="package-title"><?= htmlspecialchars($package['name']); ?></h1>
+            <p class="package-description"><?= htmlspecialchars($package['description']); ?></p>
+            <p class="package-price">Price: Rs. <?= htmlspecialchars($package['price']); ?></p>
+        </div>
+
+        <!-- Booking Button -->
+        <div class="package-booking" style="text-align: center;">
+            <h2>Book Now</h2>
+            <button id="bookNowButton" class="btn-book-now">Book Now</button>
+        </div>
+        <?php if (isset($_SESSION['error'])): ?>
+        <p class="error-message"><?= $_SESSION['error']; unset($_SESSION['error']); ?></p>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['message'])): ?>
+        <p class="success-message" style="text-align:center;"><?= $_SESSION['message']; unset($_SESSION['message']); ?></p>
+    <?php endif; ?>
+        <!-- Booking Form -->
+        <div id="bookingFormContainer" class="booking-form-container" style="display: none;">
+            <form id="booking-form" method="POST" action="" class="bookForm">
+                <input type="hidden" id="package_id" name="package_id" value="<?= htmlspecialchars($packageId); ?>">
+                <div class="form-section right">
+                    <h3>Travel Information</h3>
+                    <div class="form-group">
+                        <label for="travel_date">Travel Date:</label>
+                        <input type="date" id="travel_date" name="travel_date">
+                        <span id="dateError" class="error" style="color: red;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="no_of_people">Number of People:</label>
+                        <input type="number" id="no_of_people" name="no_of_people" min="1">
+                        <span id="peopleError" class="error" style="color: red;"></span>
+                    </div>
+                </div>
+
+                <div class="form-group submit">
+                    <button type="submit" class="btn-submit">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bookNowButton = document.getElementById('bookNowButton');
+            const bookingFormPanel = document.getElementById('bookingFormContainer');
+            const isLoggedIn = <?= isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+
+            bookNowButton.addEventListener('click', function () {
+                if (isLoggedIn) {
+                    bookingFormPanel.style.display = 'block';
+                } else {
+                    window.location.href = '/travel/login';
+                }
+            });
+
+            // Form validation (client-side)
+            document.getElementById('booking-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                document.getElementById('dateError').textContent = '';
+                document.getElementById('peopleError').textContent = '';
+
+
+                let date = document.getElementById('travel_date').value.trim();
+                let people = document.getElementById('no_of_people').value.trim();
+
+                let isValid = true;
+
+
+
+                if (!date) {
+                    //can only select date of the present or future and not of the past
+                    
+                    document.getElementById('dateError').textContent = 'Travel date is required';
+                    isValid = false;
+                }
+
+                if (!people) {
+                    document.getElementById('peopleError').textContent = 'Number of people is required';
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    document.getElementById('booking-form').submit();
+                }
+
+            })
+        });
+    </script>
+<?php else: ?>
+    <p>Package not found.</p>
+<?php endif;
+

@@ -741,3 +741,46 @@ body {
 }
 
 
+/*Guide section*/
+.guide-section {
+  width: 100%;
+  background: var(--white);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+}
+
+.guide-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--blue);
+}
+
+.guide-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 50px;
+}
+
+.guide-section table th,
+.guide-section table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray);
+}
+
+.guide-section table th {
+  background-color: var(--blue);
+  color: var(--white);
+}
+
+.guide-section table td a {
+  color: var(--blue);
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.guide-section table td a:hover {
+  text-decoration: underline;
+}
+

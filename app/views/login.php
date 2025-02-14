@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
                 die("Connection failed: " . $conn->connect_error);
             }
 
-            $stmt = $conn->prepare("SELECT id, password, user_type FROM users WHERE email = ?");
+            $stmt = $conn->prepare("SELECT id, password,tourist_id FROM users WHERE email = ?");
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -33,12 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
                 if (password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['email'] = $email;
-                    $_SESSION['user_type'] = $user['user_type'];
-                    if ($user['user_type'] === 'agency') {
-                        header("Location: /travel/agency/dashboard");
+
+                    if (!empty($user['tourist_id'])) {
+                        $_SESSION['tourist_id'] = $user['tourist_id']; // Save tourist_id for tourists
+                        $_SESSION['is_tourist'] = true;
                     } else {
-                        header("Location: /travel/home");
+                        $_SESSION['is_tourist'] = false; // Not a tourist
                     }
+                    
+                        header("Location: /travel/home");
+                    
                     exit;
                 } else {
                     $_SESSION['loginError'] = "Invalid email or password.";
@@ -61,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     <div class="signin-container">
         <div class="left-column">
             <h1> </h1>
-            <p>Discover the world, one journey at a time</p>
+            <p>Discover Nepal, one package at a time</p>
         </div>
         <div class="right-column">
             <h2>Welcome</h2>
