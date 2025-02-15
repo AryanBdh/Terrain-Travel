@@ -237,18 +237,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             isValid = false;
         }
 
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!email) {
             document.getElementById('emailError').textContent = 'Email is required';
             isValid = false;
+        } else if (!emailRegex.test(email)) {
+            document.getElementById('emailError').textContent = 'Invalid email format';
+            isValid = false;
         }
 
-        if (phone < 10) {
+        if (phone.length < 10) {
             document.getElementById('phoneError').textContent = 'Phone number must be 10 digits';
             isValid = false;
         }
 
         if (!password) {
             document.getElementById('passwordError').textContent = 'Password is required';
+            isValid = false;
+        }else if (password.length < 5) {
+            document.getElementById('passwordError').textContent = 'Password must be at least 5 characters long';
             isValid = false;
         }
 

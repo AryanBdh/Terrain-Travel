@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
     $packageId = intval($_POST['package_id']);
     $travelDate = $_POST['travel_date'];
     $numPeople = intval($_POST['no_of_people']);
-    
+
     if (empty($travelDate) || $numPeople <= 0) {
         $_SESSION['error'] = "Please fill in all required fields.";
         header("Location: /travel/package/package-detail?id=$packageId");
@@ -29,6 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
     if (!$touristId) {
         $_SESSION['error'] = "User is not registered as a tourist.";
         header("Location: /travel/login");
+        exit;
+    }
+
+    $bookingCheckQuery = "SELECT * FROM booking WHERE package_id = ? AND booking_date = ?";
+    $bookingCheckStmt = $conn->prepare($bookingCheckQuery);
+    $bookingCheckStmt->execute([$packageId, $travelDate]);
+
+    if ($bookingCheckStmt->rowCount() > 0) {
+        $_SESSION['error'] = "This package is already booked on the selected date.";
+        header("Location: /travel/package/package-detail?id=$packageId");
         exit;
     }
 
@@ -94,7 +104,7 @@ if ($packageId > 0) {
 
 
 <?php if ($package): ?>
-    
+
     <div class="package-detail-container">
         <!-- Package Details -->
         <div class="package-image">
@@ -113,11 +123,13 @@ if ($packageId > 0) {
             <button id="bookNowButton" class="btn-book-now">Book Now</button>
         </div>
         <?php if (isset($_SESSION['error'])): ?>
-        <p class="error-message"><?= $_SESSION['error']; unset($_SESSION['error']); ?></p>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['message'])): ?>
-        <p class="success-message" style="text-align:center;"><?= $_SESSION['message']; unset($_SESSION['message']); ?></p>
-    <?php endif; ?>
+            <p class="error-message"><?= $_SESSION['error'];
+            unset($_SESSION['error']); ?></p>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['message'])): ?>
+            <p class="success-message" style="text-align:center;"><?= $_SESSION['message'];
+            unset($_SESSION['message']); ?></p>
+        <?php endif; ?>
         <!-- Booking Form -->
         <div id="bookingFormContainer" class="booking-form-container" style="display: none;">
             <form id="booking-form" method="POST" action="" class="bookForm">
@@ -126,7 +138,7 @@ if ($packageId > 0) {
                     <h3>Travel Information</h3>
                     <div class="form-group">
                         <label for="travel_date">Travel Date:</label>
-                        <input type="date" id="travel_date" name="travel_date">
+                        <input type="date" id="travel_date" name="travel_date" min="<?= date('Y-m-d'); ?>">
                         <span id="dateError" class="error" style="color: red;"></span>
                     </div>
                     <div class="form-group">
@@ -170,16 +182,19 @@ if ($packageId > 0) {
 
                 let isValid = true;
 
-
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let selectedDate = new Date(date);
 
                 if (!date) {
-                    //can only select date of the present or future and not of the past
-                    
                     document.getElementById('dateError').textContent = 'Travel date is required';
+                    isValid = false;
+                } else if (selectedDate < today) {
+                    document.getElementById('dateError').textContent = 'Travel date cannot be in the past';
                     isValid = false;
                 }
 
-                if (!people) {
+                if (!people || parseInt(people) < 1) {
                     document.getElementById('peopleError').textContent = 'Number of people is required';
                     isValid = false;
                 }

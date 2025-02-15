@@ -1,34 +1,26 @@
 <?php
 
-// Include database connection
-include './config/config.php'; // Include the configuration file
+include './config/config.php';
 
-// Hardcoded admin credentials
-$adminEmail = 'admin@gmail.com'; // Replace with your hardcoded admin email
-$adminUsername = 'Admin'; // Replace with your hardcoded admin username
+$adminEmail = 'admin@gmail.com';
+$adminUsername = 'Admin';
 
 
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /travel/login'); // Redirect to login if not logged in
+    header('Location: /travel/login');
     exit();
 }
 
-// Check if the logged-in user is the admin
 if ($_SESSION['email'] === $adminEmail) {
-    // Manually set user details for the admin account
     $user = [
         'username' => $adminUsername,
         'email' => $adminEmail
     ];
-    // Assign a unique identifier for the admin
     $userId = 'admin';
     $userType = 'admin';
 } else {
-    // Fetch user details from the database
     $userId = $_SESSION['user_id'];
 
-    // Ensure the connection is established
     if ($mysqli->connect_error) {
         die("Database connection failed: " . $mysqli->connect_error);
     }
@@ -36,14 +28,12 @@ if ($_SESSION['email'] === $adminEmail) {
     $query = "SELECT * FROM users WHERE id = '$userId'";
     $result = mysqli_query($mysqli, $query);
 
-    // Check for query errors
     if (!$result) {
         die("Error fetching user data: " . mysqli_error($mysqli));
     }
 
     $user = mysqli_fetch_assoc($result);
 
-    // Ensure user data is fetched successfully
     if (!$user) {
         die("User not found.");
     }
@@ -51,33 +41,44 @@ if ($_SESSION['email'] === $adminEmail) {
     $userType = $user['user_type'];
 }
 
-// Handle profile updates
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    if (isset($_POST['cancel_booking'])) {
+        $bookingId = htmlspecialchars(trim($_POST['booking_id']));
+        $deleteBookingQuery = "DELETE FROM booking WHERE booking_id = ?";
+        $deleteBookingStmt = $mysqli->prepare($deleteBookingQuery);
 
-    // Only allow non-admin users to update their profile details
+        if ($deleteBookingStmt) {
+            $deleteBookingStmt->bind_param("i", $bookingId);
+            $deleteBookingStmt->execute();
+
+            if ($deleteBookingStmt->affected_rows > 0) {
+                $_SESSION['success'] = "Booking cancelled successfully.";
+            } else {
+                $_SESSION['error'] = "Failed to cancel booking.";
+            }
+        } else {
+            $_SESSION['error'] = "Error preparing delete statement.";
+        }
+    }
+
+
     if ($_SESSION['email'] !== $adminEmail) {
-        // Handle profile picture update
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-            // Directory to store profile images
             $targetDir = "/travel/public/images/profile_images/";
-            $targetFile = $targetDir . $userId . '.png'; // Save as user_id.png
+            $targetFile = $targetDir . $userId . '.png';
 
-            // Ensure directory exists and is writable
             if (!is_dir($_SERVER['DOCUMENT_ROOT'] . $targetDir)) {
                 mkdir($_SERVER['DOCUMENT_ROOT'] . $targetDir, 0777, true);
             }
 
-            // Move uploaded file to the destination folder
             if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $targetFile)) {
-                // Update the profile image path in the database (store the relative path)
                 $updateQuery = "UPDATE users SET profile_image='$targetFile' WHERE id='$userId'";
 
                 if (mysqli_query($mysqli, $updateQuery)) {
                     $_SESSION['success'] = "Profile picture updated successfully.";
-                    $_SESSION['profile_image'] = $targetFile; // Update session with the new profile image path
+                    $_SESSION['profile_image'] = $targetFile;
 
-                    // Redirect after updating session to reload the page and reflect new image
                     header('Location: /travel/profile');
                     exit();
                 } else {
@@ -87,62 +88,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['error'] = "Failed to upload profile picture.";
             }
         } elseif (isset($_FILES['profile_image'])) {
-            // Handle any file upload errors
             $_SESSION['error'] = "Error uploading file: " . $_FILES['profile_image']['error'];
         }
 
-        // Handle user details update
         if (isset($_POST['update_details'])) {
             $name = htmlspecialchars(trim($_POST['name']));
             $email = htmlspecialchars(trim($_POST['email']));
             $userType = $_SESSION['user_type'];
             $userId = $_SESSION['user_id'];
 
-            // Update user details in the users table
             $updateUserQuery = "UPDATE users SET username='$name', email='$email' WHERE id='$userId'";
             if (mysqli_query($mysqli, $updateUserQuery)) {
                 $_SESSION['success'] = "Details updated successfully.";
-                $_SESSION['email'] = $email; // Update session email
+                $_SESSION['email'] = $email;
 
-                // Handle guide-specific updates
                 if ($userType === 'guide') {
                     $speciality = htmlspecialchars(trim($_POST['speciality']));
                     $status = htmlspecialchars(trim($_POST['status']));
 
-                    // Check if the guide exists in the guide table
                     $checkGuideQuery = "SELECT * FROM guide WHERE user_id='$userId'";
                     $guideResult = mysqli_query($mysqli, $checkGuideQuery);
 
                     if (!$guideResult) {
                         $_SESSION['error'] = "Error checking guide details: " . mysqli_error($mysqli);
-                        error_log("Guide Check Error: " . mysqli_error($mysqli)); // Debugging
+                        error_log("Guide Check Error: " . mysqli_error($mysqli));
                     } else if (mysqli_num_rows($guideResult) > 0) {
-                        // Update existing guide details
                         $updateGuideQuery = "
                             UPDATE guide 
                             SET guide_name='$name', email='$email', speciality='$speciality', status='$status' 
                             WHERE user_id='$userId'";
                         if (!mysqli_query($mysqli, $updateGuideQuery)) {
                             $_SESSION['error'] = "Failed to update guide-specific details.";
-                            error_log("Guide Update Error: " . mysqli_error($mysqli)); // Debugging
+                            error_log("Guide Update Error: " . mysqli_error($mysqli));
                         }
                     } else {
-                        // Insert new guide details if not existing
                         $insertGuideQuery = "
                             INSERT INTO guide (user_id, guide_name, email, speciality, status) 
                             VALUES ('$userId', '$name', '$email', '$speciality', '$status')";
                         if (!mysqli_query($mysqli, $insertGuideQuery)) {
                             $_SESSION['error'] = "Failed to add guide-specific details.";
-                            error_log("Guide Insert Error: " . mysqli_error($mysqli)); // Debugging
+                            error_log("Guide Insert Error: " . mysqli_error($mysqli));
                         }
                     }
                 }
             } else {
                 $_SESSION['error'] = "Failed to update user details.";
-                error_log("User Update Error: " . mysqli_error($mysqli)); // Debugging
+                error_log("User Update Error: " . mysqli_error($mysqli));
             }
 
-            // Redirect to profile page after processing
             header('Location: /travel/profile');
             exit();
         }
@@ -184,7 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php if (isset($userType) && $userType === 'tourist'): ?>
                 <h3>Your Bookings</h3>
                 <?php
-                // Fetch the tourist_id for the logged-in user
                 $userId = $_SESSION['user_id'];
                 $touristIdQuery = "SELECT tourist_id FROM tourists WHERE user_id = ?";
                 $touristIdStmt = $mysqli->prepare($touristIdQuery);
@@ -196,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $touristData = $touristIdResult->fetch_assoc();
                     $touristId = $touristData['tourist_id'];
 
-                    // Fetch the bookings for the tourist
                     $bookingQuery = "
     SELECT b.booking_id, p.name AS package_name, b.booking_date, b.no_of_people, b.total_cost, g.guide_name, g.guide_phone
     FROM booking b
@@ -239,13 +230,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <form method="POST" style="display: inline;">
                                                 <input type="hidden" name="booking_id"
                                                     value="<?= htmlspecialchars($booking['booking_id']); ?>">
-                                                <button type="submit" name="cancel_booking" onclick="return confirm('Do you want to cancel your booking?');">Cancel</button>
+                                                <button type="submit" name="cancel_booking"
+                                                    onclick="return confirm('Do you want to cancel your booking?');">Cancel</button>
                                             </form>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
+                        <div class="notification">
+                            <?php if (isset($_SESSION['success'])): ?>
+                                <p class="success-message"><?php echo htmlspecialchars($_SESSION['success']); ?></p>
+                                <?php unset($_SESSION['success']); ?>
+                            <?php elseif (isset($_SESSION['error'])): ?>
+                                <p class="error-message"><?php echo htmlspecialchars($_SESSION['error']); ?></p>
+                                <?php unset($_SESSION['error']); ?>
+                            <?php endif; ?>
+                        </div>
                     <?php else: ?>
                         <p>No bookings found for this user.</p>
                     <?php endif; ?>
@@ -266,7 +267,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $guideData = $guideResult->fetch_assoc();
                     $guideId = $guideData['guide_id'];
 
-                    // Fetch the assigned packages for the guide
                     $assignedPackagesQuery = "
                 SELECT p.name AS package_name,
                 b.booking_date,
@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $assignedPackages = $assignedPackagesStmt->get_result();
 
                     if ($assignedPackages && $assignedPackages->num_rows > 0): ?>
-                         <table>
+                        <table>
                             <thead>
                                 <tr>
                                     <th>Package</th>
@@ -307,7 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <td><?= htmlspecialchars($assignedPackage['tourist_phone']); ?></td>
                                         <td><?= htmlspecialchars($assignedPackage['no_of_people']); ?></td>
                                         <td><?= htmlspecialchars($assignedPackage['category']); ?></td>
-                                        <td><?= htmlspecialchars($assignedPackage['duration']); ?></td>
+                                        <td><?= htmlspecialchars($assignedPackage['duration'] . ' days and ' . ($assignedPackage['duration'] - 1) . ' nights'); ?>
+                                        </td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
@@ -323,12 +324,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
 
-        <?php if (isset($_SESSION['success'])): ?>
-            <p class="success-message"><?php echo htmlspecialchars($_SESSION['success']); ?></p>
-            <?php unset($_SESSION['success']); // Clear the message after displaying it ?>
-        <?php elseif (isset($_SESSION['error'])): ?>
-            <p class="error-message"><?php echo htmlspecialchars($_SESSION['error']); ?></p>
-            <?php unset($_SESSION['error']); // Clear the message after displaying it ?>
-        <?php endif; ?>
     </div>
 </body>
