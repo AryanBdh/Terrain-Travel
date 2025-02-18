@@ -6,7 +6,7 @@
             </a>
         </div>
         <nav>
-            <ul>
+            <ul id="nav">
                 <li><a href="/travel/home">Home</a></li>
                 <li><a href="/travel/about">About</a></li>
                 <li><a href="/travel/packages">Packages</a></li>
@@ -14,32 +14,33 @@
                 <li><a href="/travel/contact">Contact</a></li>
             </ul>
         </nav>
+        
         <?php if (isset($_SESSION['user_id'])): ?>
-    <!-- User is logged in -->
-    <li class="user-options">
-        <?php
-        // Determine profile image path
-        $defaultImagePath = '/travel/public/images/default.png'; // Path to default image
-        $profileImagePath = '/travel/public/images/profile_images/' . $_SESSION['user_id'] . '.png';
+            <!-- User is logged in -->
+            <li class="user-options">
+                <?php
+                // Determine profile image path
+                $defaultImagePath = '/travel/public/images/default.png'; // Path to default image
+                $profileImagePath = '/travel/public/images/profile_images/' . $_SESSION['user_id'] . '.png';
 
-        // Check if the user's profile image exists; if not, use the default image
-        $profileImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath . '?' . time() : $defaultImagePath;
-        ?>
-        <a href="#" class="user-profile" id="userProfile">
-            <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile" class="profile-pic">
-        </a>
-        <ul class="dropdown" id="userDropdown">
-            <li><a href="/travel/profile">View Profile</a></li>
-            
-            <!-- Only show Dashboard if the user is admin -->
-            <?php if ($_SESSION['email'] === 'admin@gmail.com'): ?>
-                <li><a href="/travel/admin/dashboard">Dashboard</a></li>
-            <?php endif; ?>
+                // Check if the user's profile image exists; if not, use the default image
+                $profileImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath . '?' . time() : $defaultImagePath;
+                ?>
+                <a href="#" class="user-profile" id="userProfile">
+                    <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile" class="profile-pic">
+                </a>
+                <ul class="dropdown" id="userDropdown">
+                    <li><a href="/travel/profile">View Profile</a></li>
 
-            <li><a href="/travel/logout">Logout</a></li>
-        </ul>
-    </li>
-<?php else: ?>
+                    <!-- Only show Dashboard if the user is admin -->
+                    <?php if ($_SESSION['email'] === 'admin@gmail.com'): ?>
+                        <li><a href="/travel/admin/dashboard">Dashboard</a></li>
+                    <?php endif; ?>
+
+                    <li><a href="/travel/logout">Logout</a></li>
+                </ul>
+            </li>
+        <?php else: ?>
             <!-- User is not logged in -->
             <li style="list-style:none"><a href="/travel/login" class="sign-in-btn">Sign in</a></li>
         <?php endif; ?>
@@ -47,6 +48,7 @@
 </header>
 
 <script>
+    
     // JavaScript to handle dropdown visibility
     document.addEventListener('DOMContentLoaded', function () {
         var userProfile = document.getElementById('userProfile');
@@ -69,3 +71,6 @@
         }
     });
 </script>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

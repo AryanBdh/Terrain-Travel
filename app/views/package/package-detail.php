@@ -4,6 +4,8 @@ require_once './config/db.php';
 $db = new Database();
 $conn = $db->dbConnection();
 
+
+
 // Retrieve the package ID from the query string
 $packageId = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -32,12 +34,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
         exit;
     }
 
-    $bookingCheckQuery = "SELECT * FROM booking WHERE package_id = ? AND booking_date = ?";
+    $userId = $_SESSION['user_id'];
+
+    $bookingCheckQuery = "SELECT * FROM booking WHERE user_id = ? AND booking_date = ?";
     $bookingCheckStmt = $conn->prepare($bookingCheckQuery);
-    $bookingCheckStmt->execute([$packageId, $travelDate]);
+    $bookingCheckStmt->execute([$userId, $travelDate]);
 
     if ($bookingCheckStmt->rowCount() > 0) {
-        $_SESSION['error'] = "This package is already booked on the selected date.";
+        $_SESSION['error'] = "You already have a booking on the selected date.";
+        header("Location: /travel/package/package-detail?id=$packageId");
+        exit;
+    }
+
+    // Check if the user has already booked the same package on the selected date
+    $packageCheckQuery = "SELECT * FROM booking WHERE user_id = ? AND package_id = ? AND booking_date = ?";
+    $packageCheckStmt = $conn->prepare($packageCheckQuery);
+    $packageCheckStmt->execute([$userId, $packageId, $travelDate]);
+
+    if ($packageCheckStmt->rowCount() > 0) {
+        $_SESSION['error'] = "You have already booked this package on the selected date.";
         header("Location: /travel/package/package-detail?id=$packageId");
         exit;
     }
@@ -63,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
     $guideStmt = $conn->prepare($guideQuery);
     $guideStmt->execute([$packageId]);
     $guide = $guideStmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($guide) {
+    
+    if ($guide && !empty($guide['guide_id'])) {
         $guideId = $guide['guide_id'];
     } else {
         $_SESSION['error'] = "No guide assigned to this package.";
@@ -73,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
     }
 
     // Insert booking details into the booking table
-    $bookingQuery = "INSERT INTO booking (tourist_id, package_id, guide_id, booking_date,no_of_people, total_cost) VALUES (?, ?, ?, ?, ?,?)";
+    $bookingQuery = "INSERT INTO booking (tourist_id, package_id, guide_id, booking_date,no_of_people, total_cost, user_id) VALUES (?, ?, ?, ?, ?,?, ?)";
     $bookingStmt = $conn->prepare($bookingQuery);
-    $bookingStmt->execute([$touristId, $packageId, $guideId, $travelDate, $numPeople, $totalCost]);
+    $bookingStmt->execute([$touristId, $packageId, $guideId, $travelDate, $numPeople, $totalCost, $userId]);
 
     $_SESSION['message'] = "Booking successfully confirmed.";
     header("Location: /travel/package/package-detail?id=$packageId");  // Redirect to the package page with success message
@@ -106,15 +121,17 @@ if ($packageId > 0) {
 <?php if ($package): ?>
 
     <div class="package-detail-container">
-        <!-- Package Details -->
         <div class="package-image">
             <img src="/travel/public/images/packages/<?= htmlspecialchars($package['image']); ?>"
                 alt="<?= htmlspecialchars($package['name']); ?>">
         </div>
-        <div class="package-info">
-            <h1 class="package-title"><?= htmlspecialchars($package['name']); ?></h1>
-            <p class="package-description"><?= htmlspecialchars($package['description']); ?></p>
-            <p class="package-price">Price: Rs. <?= htmlspecialchars($package['price']); ?></p>
+        <div class="newSection">
+            <div class="package-info">
+                <h1 class="package-title"><?= htmlspecialchars($package['name']); ?></h1>
+                <p class="package-description"><?= nl2br(htmlspecialchars($package['description'])); ?></p>
+                <p class="package-price">Price: Rs. <?= htmlspecialchars($package['price']) . ' per person'; ?></p>
+            </div>
+
         </div>
 
         <!-- Booking Button -->

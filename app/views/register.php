@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                     </div>
                     <div class="form-group half">
                         <label for="phone_no">Phone Number:</label>
-                        <input type="number" id="phone_no" name="phone_no" maxlength="10" oninput="validatePhone(this)">
+                        <input type="number" id="phone_no" name="phone_no" class="phoneBox" maxlength="10" oninput="validatePhone(this)">
                         <span id="phoneError" class="error" style="color:red;"></span>
                     </div>
                 </div>

@@ -37,15 +37,6 @@ $packageCount = $packageResult->fetch(PDO::FETCH_ASSOC)['package_count'];
         </div>
     </div>
 
-    <div class="card">
-        <div>
-            <div class="numbers">0</div>
-            <div class="cardName">Reviews</div>
-        </div>
-
-        <div class="iconBx">
-            <ion-icon name="chatbubbles-outline"></ion-icon>
-        </div>
-    </div>
+   
 
 </div>

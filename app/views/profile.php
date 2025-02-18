@@ -238,15 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
-                        <div class="notification">
-                            <?php if (isset($_SESSION['success'])): ?>
-                                <p class="success-message"><?php echo htmlspecialchars($_SESSION['success']); ?></p>
-                                <?php unset($_SESSION['success']); ?>
-                            <?php elseif (isset($_SESSION['error'])): ?>
-                                <p class="error-message"><?php echo htmlspecialchars($_SESSION['error']); ?></p>
-                                <?php unset($_SESSION['error']); ?>
-                            <?php endif; ?>
-                        </div>
+                       
                     <?php else: ?>
                         <p>No bookings found for this user.</p>
                     <?php endif; ?>
@@ -254,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     echo "<p>Tourist details not found for this user.</p>";
                 }
                 ?>
-            <?php elseif (isset($userType) && $userType === 'guide'): ?>
+           <?php elseif (isset($userType) && $userType === 'guide'): ?>
                 <h3>Your Assigned Packages</h3>
                 <?php
                 $guideQuery = "SELECT guide_id FROM guide WHERE user_id = ?";

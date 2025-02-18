@@ -79,10 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password">
                 </div>
-                <a href="#" class="forgot-password">Forgot your password?</a>
+                
                 <button type="submit" name="login">LOGIN</button>
             </form>
-            <p class="register-link">Don't have an account? <a href="/travel/register">Register Now</a></p>
+            <p class="register-link">Don't have an account? <a href="/travel/register" >Register Now</a></p>
             <?php if (isset($_SESSION['loginError'])): ?>
                 <p class="error-message"><?php echo htmlspecialchars($_SESSION['loginError']); ?></p>
                 <?php unset($_SESSION['loginError']); // Clear the error message ?>

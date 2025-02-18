@@ -65,14 +65,14 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <ion-icon name="cash-outline"></ion-icon>
                     </div>
                     <h3>Price Guarantee</h3>
-                    <p>Our service is reliable and convenient, our service is quality.</p>
+                    <p>Enjoy competitive rates with no hidden fees. We ensure you get the best value for your money on every trip.</p>
                 </div>
                 <div class="card">
                     <div class="icon">
                         <ion-icon name="people-outline"></ion-icon>
                     </div>
                     <h3>Experienced Guide</h3>
-                    <p>Our service is reliable and convenient, our service is quality.</p>
+                    <p>Our professional guides have extensive local knowledge, ensuring a safe, informative, and unforgettable journey.</p>
                 </div>
             </div>
         </section>

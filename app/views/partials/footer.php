@@ -17,7 +17,7 @@
             <ul>
                 <li>📍 Kathmandu</li>
                 <li>📞 +977 9856430234</li>
-                <li>✉️ info@traveller.com</li>
+                <li>✉️ info@terraintravel.com</li>
             </ul>
         </div>
         <div class="footer-social">
