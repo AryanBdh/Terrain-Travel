@@ -16,14 +16,11 @@
         </nav>
         
         <?php if (isset($_SESSION['user_id'])): ?>
-            <!-- User is logged in -->
             <li class="user-options">
                 <?php
-                // Determine profile image path
-                $defaultImagePath = '/travel/public/images/default.png'; // Path to default image
+                $defaultImagePath = '/travel/public/images/default.png'; 
                 $profileImagePath = '/travel/public/images/profile_images/' . $_SESSION['user_id'] . '.png';
 
-                // Check if the user's profile image exists; if not, use the default image
                 $profileImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath . '?' . time() : $defaultImagePath;
                 ?>
                 <a href="#" class="user-profile" id="userProfile">
@@ -32,7 +29,6 @@
                 <ul class="dropdown" id="userDropdown">
                     <li><a href="/travel/profile">View Profile</a></li>
 
-                    <!-- Only show Dashboard if the user is admin -->
                     <?php if ($_SESSION['email'] === 'admin@gmail.com'): ?>
                         <li><a href="/travel/admin/dashboard">Dashboard</a></li>
                     <?php endif; ?>
@@ -41,7 +37,6 @@
                 </ul>
             </li>
         <?php else: ?>
-            <!-- User is not logged in -->
             <li style="list-style:none"><a href="/travel/login" class="sign-in-btn">Sign in</a></li>
         <?php endif; ?>
     </div>
@@ -49,14 +44,12 @@
 
 <script>
     
-    // JavaScript to handle dropdown visibility
     document.addEventListener('DOMContentLoaded', function () {
         var userProfile = document.getElementById('userProfile');
         var userDropdown = document.getElementById('userDropdown');
 
-        // Only proceed if both elements exist
         if (userProfile && userDropdown) {
-            userDropdown.style.display = 'none'; // Initially hide the dropdown
+            userDropdown.style.display = 'none'; 
 
             userProfile.addEventListener('click', function (event) {
                 userDropdown.style.display = (userDropdown.style.display === 'none') ? 'block' : 'none';

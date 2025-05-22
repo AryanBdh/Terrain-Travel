@@ -16,6 +16,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <tr>
                 <th>S.N</th>
                 <th>Username</th>
+                <th>User Type</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Registration Date</th>
@@ -27,6 +28,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <tr>
                         <td><?= htmlspecialchars($user['id']); ?></td>
                         <td><?= htmlspecialchars($user['username']); ?></td>
+                        <td><?= htmlspecialchars($user['user_type']); ?></td>
                         <td><?= htmlspecialchars($user['email']); ?></td>
                         <td><?= htmlspecialchars($user['phone_no']); ?></td>
                         <td><?= htmlspecialchars($user['created_at']); ?></td>

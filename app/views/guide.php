@@ -24,16 +24,13 @@ $guides = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="guide-content">
         <?php foreach ($guides as $guide): 
-                // Construct the profile image path
                 $profileImagePath = '/travel/public/images/profile_images/' . $guide['id'] . '.png';
                 $defaultImage = '/travel/public/images/default.png';
 
-                // Check if the image exists and append timestamp to refresh image
                 $guideImage = file_exists($_SERVER['DOCUMENT_ROOT'] . $profileImagePath) ? $profileImagePath . '?' . time() : $defaultImage;
             ?>
                 <div class="guide-card">
                     <div class="guide-image">
-                        <!-- Display guide image dynamically -->
                         <img src="<?= htmlspecialchars($guideImage) ?>" alt="Guide Image">
                     </div>
                     <div class="guide-details">

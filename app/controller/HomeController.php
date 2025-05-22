@@ -9,7 +9,7 @@ class HomeController {
     }
 
     public function index() {
-        $packages = $this->packageModel->getAllPackages();  // Fetch packages
+        $packages = $this->packageModel->getAllPackages();  
     
         // Debugging: Check if packages are fetched
         if (empty($packages)) {

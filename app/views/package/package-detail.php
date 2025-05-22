@@ -6,12 +6,9 @@ $conn = $db->dbConnection();
 
 
 
-// Retrieve the package ID from the query string
 $packageId = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST['no_of_people'], $_POST['package_id'])) {
-    // Sanitize and validate input
     $packageId = intval($_POST['package_id']);
     $travelDate = $_POST['travel_date'];
     $numPeople = intval($_POST['no_of_people']);
@@ -22,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
         exit;
     }
 
-    // Retrieve the logged-in user's tourist ID
     $touristIdQuery = "SELECT tourist_id FROM users WHERE id = ?";
     $touristIdStmt = $conn->prepare($touristIdQuery);
     $touristIdStmt->execute([$_SESSION['user_id']]);
@@ -46,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
         exit;
     }
 
-    // Check if the user has already booked the same package on the selected date
     $packageCheckQuery = "SELECT * FROM booking WHERE user_id = ? AND package_id = ? AND booking_date = ?";
     $packageCheckStmt = $conn->prepare($packageCheckQuery);
     $packageCheckStmt->execute([$userId, $packageId, $travelDate]);
@@ -57,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
         exit;
     }
 
-    // Get the package details to calculate total cost
     $packageQuery = "SELECT * FROM packages WHERE package_id = ?";
     $packageStmt = $conn->prepare($packageQuery);
     $packageStmt->execute([$packageId]);
@@ -69,11 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
         exit;
     }
 
-    // Calculate the total cost
     $packagePrice = $package['price'];
     $totalCost = $packagePrice * $numPeople;
 
-    // Get the guide assigned to the package
     $guideQuery = "SELECT guide_id FROM packages WHERE package_id = ?";
     $guideStmt = $conn->prepare($guideQuery);
     $guideStmt->execute([$packageId]);
@@ -87,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
         exit;
     }
 
-    // Insert booking details into the booking table
     $bookingQuery = "INSERT INTO booking (tourist_id, package_id, guide_id, booking_date,no_of_people, total_cost, user_id) VALUES (?, ?, ?, ?, ?,?, ?)";
     $bookingStmt = $conn->prepare($bookingQuery);
     $bookingStmt->execute([$touristId, $packageId, $guideId, $travelDate, $numPeople, $totalCost, $userId]);
@@ -97,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['travel_date'], $_POST
     exit;
 }
 
-// Fetch package details to display
 if ($packageId > 0) {
     $stmt = $conn->prepare("SELECT * FROM packages WHERE package_id = ?");
     $stmt->execute([$packageId]);
@@ -134,7 +124,6 @@ if ($packageId > 0) {
 
         </div>
 
-        <!-- Booking Button -->
         <div class="package-booking" style="text-align: center;">
             <h2>Book Now</h2>
             <button id="bookNowButton" class="btn-book-now">Book Now</button>
@@ -147,7 +136,7 @@ if ($packageId > 0) {
             <p class="success-message" style="text-align:center;"><?= $_SESSION['message'];
             unset($_SESSION['message']); ?></p>
         <?php endif; ?>
-        <!-- Booking Form -->
+
         <div id="bookingFormContainer" class="booking-form-container" style="display: none;">
             <form id="booking-form" method="POST" action="" class="bookForm">
                 <input type="hidden" id="package_id" name="package_id" value="<?= htmlspecialchars($packageId); ?>">
@@ -186,7 +175,6 @@ if ($packageId > 0) {
                 }
             });
 
-            // Form validation (client-side)
             document.getElementById('booking-form').addEventListener('submit', function (e) {
                 e.preventDefault();
 

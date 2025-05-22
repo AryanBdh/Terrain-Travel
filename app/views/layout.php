@@ -35,7 +35,6 @@
     </main>
 
     <?php
-    //if the page is login or register, do not include the footer
     if ($page !== 'login' && $page !== 'register')
     {
         include 'partials/footer.php';

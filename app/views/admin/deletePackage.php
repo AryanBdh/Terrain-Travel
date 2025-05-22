@@ -8,10 +8,9 @@ $conn = $db->dbConnection();
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $packageId = intval($_GET['id']);
 
-    // Delete the package from the database
     $stmt = $conn->prepare("DELETE FROM packages WHERE package_id = ?");
     if ($stmt->execute([$packageId])) {
-        header("Location: /travel/admin/packages");  // Redirect back to the packages page after deletion
+        header("Location: /travel/admin/packages");  
         exit;
     } else {
         echo "Error deleting package.";

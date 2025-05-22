@@ -18,7 +18,6 @@ $conn = $db->dbConnection();
 $editingPackage = null;
 $isEditing = false;
 
-// Check if an edit request was made
 if (isset($_GET['package_id'])) {
     $packageId = $_GET['package_id'];
     $stmt = $conn->prepare("SELECT * FROM packages WHERE package_id = ?");
@@ -27,7 +26,6 @@ if (isset($_GET['package_id'])) {
     $isEditing = true;
 }
 
-// Handle form submission for add/update
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['package-name'];
     $description = $_POST['package-description'];
@@ -44,17 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             mkdir($targetDir, 0777, true);
         }
 
-        // Check if a new image is uploaded
         if ($image && $imageTmpName) {
             move_uploaded_file($imageTmpName, $targetFilePath);
         }
 
         if (isset($_POST['package_id']) && $_POST['package_id']) {
-            // Update existing package
             $stmt = $conn->prepare("UPDATE packages SET name = ?, description = ?, price = ?, image = ?, duration=?,category=? WHERE package_id = ?");
             $stmt->execute([$name, $description, $price, $image, $duration, $category, $_POST['package_id']]);
         } else {
-            // Insert new package
             $stmt = $conn->prepare("INSERT INTO packages (name, description, price, image,duration,category) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([$name, $description, $price, $image, $duration, $category]);
         }
@@ -63,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all packages to display in the table
 $stmt = $conn->query("SELECT * FROM packages");
 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -148,7 +142,6 @@ $totalPages = ceil(count($packages) / $packagesPerPage);
                         <td><?= htmlspecialchars($package['price']); ?></td>
                         <td><img src="/travel/public/images/packages/<?= htmlspecialchars($package['image']); ?>"
                                 alt="<?= htmlspecialchars($package['name']); ?>" width="100" height="70px"></td>
-                <!-- showing the duration in days and night -->
                         <td><?= htmlspecialchars($package['duration'] . ' days and ' . ($package['duration'] - 1) . ' nights') ?></td>
                         <td>
                             <a
@@ -161,7 +154,6 @@ $totalPages = ceil(count($packages) / $packagesPerPage);
             </tbody>
         </table>
 
-        <!-- Pagination Links at the Bottom of the Table -->
         <div class="pagination">
             <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                 <a href="#" class="page-link <?= $i == 1 ? 'active' : '' ?>" data-page="<?= $i ?>">
@@ -188,19 +180,16 @@ $totalPages = ceil(count($packages) / $packagesPerPage);
             link.addEventListener('click', function (e) {
                 e.preventDefault();
 
-                // Remove active class from all pagination links
                 pageLinks.forEach(link => link.classList.remove('active'));
                 this.classList.add('active');
 
                 const page = parseInt(this.dataset.page);
                 currentPage = page;
 
-                // Show only rows for the current page
                 showPage(page);
             });
         });
 
-        // Show page 1 by default on load
         showPage(1);
 
         const form = document.getElementById('packageForm');

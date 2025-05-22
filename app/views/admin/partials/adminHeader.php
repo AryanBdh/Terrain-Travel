@@ -52,7 +52,6 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
         </li>
        
 
-        <!-- a logout button that will destroy the session and redirect the user to the home page -->
 
         <li>
             <a href="/travel/logout">

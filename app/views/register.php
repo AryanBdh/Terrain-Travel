@@ -1,10 +1,9 @@
 <?php
-include './config/config.php'; // Include the configuration file to establish a database connection
+include './config/config.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 
 
-    // Retrieve and sanitize input
     $username = htmlspecialchars(trim($_POST['username']));
     $email = htmlspecialchars(trim($_POST['email']));
     $phone_no = htmlspecialchars(trim($_POST['phone_no']));
@@ -12,20 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     $confirmPassword = htmlspecialchars(trim($_POST['confirm-password']));
     $userType = htmlspecialchars(trim($_POST['user_type']));
 
-    // Validate inputs
     if (empty($username) || empty($email) || empty($phone_no) || empty($password) || empty($confirmPassword)) {
         $_SESSION['error'] = "All fields are .";
     } elseif ($password !== $confirmPassword) {
         $_SESSION['error'] = "Passwords do not match.";
     } else {
-        // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // Start a transaction to ensure data integrity
         $mysqli->begin_transaction();
 
         try {
-            // Insert into the users table
             $stmt = $mysqli->prepare("INSERT INTO users (username, email, phone_no, password, user_type) VALUES (?, ?, ?, ?, ?)");
             $stmt->bind_param('sssss', $username, $email, $phone_no, $hashedPassword, $userType);
 
@@ -33,11 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 throw new Exception("Failed to insert into users table.");
             }
 
-            // Get the newly inserted user ID
             $userId = $stmt->insert_id;
 
             if ($userType === 'tourist') {
-                // Insert into tourists table with ON DUPLICATE and get existing tourist_id
                 $touristStmt = $mysqli->prepare("
                     INSERT INTO tourists (tourist_name, tourist_email, phone_no, user_id) 
                     VALUES (?, ?, ?, ?)
@@ -49,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 $touristStmt->bind_param("sssi", $username, $email, $phone_no, $userId);
                 $touristStmt->execute();
 
-                // Get tourist_id either from new insert or existing record
                 $touristId = $mysqli->insert_id;
                 if ($touristId == 0) {
                     $existingTouristStmt = $mysqli->prepare("SELECT tourist_id FROM tourists WHERE tourist_email = ?");
@@ -61,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 }
                 $touristStmt->close();
 
-                // Update users table with correct tourist_id
                 $updateUserStmt = $mysqli->prepare("UPDATE users SET tourist_id = ? WHERE id = ?");
                 $updateUserStmt->bind_param("ii", $touristId, $userId);
                 if (!$updateUserStmt->execute()) {
@@ -71,10 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             }
 
 
-            // If user type is guide, insert into the guide table
             if ($userType === 'guide') {
-                $speciality = htmlspecialchars($_POST['speciality']); // Capture guide's speciality
-                $status = "Available"; // Default status for a new guide
+                $speciality = htmlspecialchars($_POST['speciality']); 
+                $status = "Available"; 
 
                 $guideStmt = $mysqli->prepare("INSERT INTO guide (user_id, guide_name, speciality, email, guide_phone, status) VALUES (?, ?, ?, ?, ?, ?)");
                 $guideStmt->bind_param("isssss", $userId, $username, $speciality, $email, $phone_no, $status);
@@ -86,21 +76,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
                 $guideStmt->close();
             }
 
-            // Commit the transaction
             $mysqli->commit();
 
             $_SESSION['success'] = "Registration successful!";
         } catch (Exception $e) {
-            // Rollback transaction in case of error
             $mysqli->rollback();
             $_SESSION['error'] = "Registration failed: " . $e->getMessage();
         }
 
-        // Close the statement
         $stmt->close();
     }
 
-    // Redirect to clear POST data
     header("Location: /travel/register");
     exit();
 }
@@ -120,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         <div class="registration-right-column">
             <h2>Create an Account</h2>
 
-            <!-- Notification messages -->
             <div class="notification">
                 <?php if (isset($_SESSION['error'])): ?>
                     <p class="error"><?= htmlspecialchars($_SESSION['error']) ?></p>
@@ -206,7 +191,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
         var userType = document.getElementById('user-type').value;
         var specialityContainer = document.getElementById('speciality-container');
 
-        // Show speciality field if user selects 'guide'
         if (userType === 'guide') {
             specialityContainer.style.display = 'block';
         } else {
@@ -215,14 +199,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     }
 
     document.getElementById('register-submit').addEventListener('click', function (e) {
-        // Clear previous error messages
         document.getElementById('nameError').textContent = '';
         document.getElementById('emailError').textContent = '';
         document.getElementById('phoneError').textContent = '';
         document.getElementById('passwordError').textContent = '';
         document.getElementById('confirmPasswordError').textContent = '';
 
-        // Form fields
         let name = document.getElementById('username').value.trim();
         let email = document.getElementById('email').value.trim();
         let phone = document.getElementById('phone_no').value.trim();
@@ -231,7 +213,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
 
         let isValid = true;
 
-        // Validation logic
         if (!name) {
             document.getElementById('nameError').textContent = 'Name is required';
             isValid = false;
@@ -269,11 +250,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
             isValid = false;
         }
 
-        // If validation fails, prevent form submission
         if (!isValid) {
-            e.preventDefault(); // Prevent form submission
+            e.preventDefault(); 
         } else {
-            // Let the form submit naturally
             document.getElementById('signup-form').submit();
         }
     });
